@@ -293,15 +293,31 @@ export default function BookingFlow() {
                         onChange={() => selectClinic(clinic.id)}
                         style={{ marginTop: 4 }}
                       />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 500, fontSize: 14 }}>{clinic.flag} {clinic.name}</div>
-                        <div style={{ fontSize: 11, color: '#888', margin: '2px 0 6px' }}>{clinic.city} · {clinic.accreditation}</div>
-                        {clinic.specialties && <div style={{ fontSize: 12, color: '#555' }}>{clinic.specialties}</div>}
-                        {clinic.price_min_usd > 0 && (
-                          <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
-                            From ${clinic.price_min_usd}{clinic.price_max_usd > 0 ? `–$${clinic.price_max_usd}` : ''}
-                          </div>
-                        )}
+                      <div style={{ flex: 1, display: 'flex', gap: 12 }}>
+                        <div style={{
+                          width: 72, height: 72, borderRadius: 'var(--radius-md)', flexShrink: 0, overflow: 'hidden',
+                          background: '#f5f5f3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
+                        }}>
+                          {clinic.image_url ? (
+                            <img
+                              src={clinic.image_url}
+                              alt={clinic.name}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }}
+                            />
+                          ) : null}
+                          <span style={{ display: clinic.image_url ? 'none' : 'flex' }}>{clinic.flag}</span>
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontWeight: 500, fontSize: 14 }}>{clinic.flag} {clinic.name}</div>
+                          <div style={{ fontSize: 11, color: '#888', margin: '2px 0 6px' }}>{clinic.city} · {clinic.accreditation}</div>
+                          {clinic.specialties && <div style={{ fontSize: 12, color: '#555' }}>{clinic.specialties}</div>}
+                          {clinic.price_min_usd > 0 && (
+                            <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
+                              From ${clinic.price_min_usd}{clinic.price_max_usd > 0 ? `–$${clinic.price_max_usd}` : ''}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </label>
                   ))}

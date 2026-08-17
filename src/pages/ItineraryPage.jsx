@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { TopBar, Footer } from '../components/Nav'
 import { Timeline } from '../components/Timeline'
 import { getItinerary } from '../data/itineraries'
@@ -13,12 +13,14 @@ const LEGEND = [
 export default function ItineraryPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const itin = getItinerary(id)
 
   if (!itin) return <div style={{ padding: 40, textAlign: 'center' }}>Itinerary not found.</div>
 
-  const bookingRef = 'HCH-2025-0614'
-  const travellers = 'Sarah Reynolds & James Reynolds'
+  const bookingRef = location.state?.bookingRef || 'HCH-2025-0614'
+  const travellers = location.state?.guestName || 'Sarah Reynolds & James Reynolds'
+  const travellersCount = location.state?.travellersCount || 2
 
   return (
     <div className="site-shell">
@@ -37,9 +39,14 @@ export default function ItineraryPage() {
         <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>
           {travellers} · Booking ref: {bookingRef}
         </div>
+        {location.state?.packageTitle && (
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>
+            {location.state.packageTitle} · {location.state.clinicName}
+          </div>
+        )}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', marginTop: 16, paddingTop: 12, borderTop: '0.5px solid rgba(255,255,255,0.2)' }}>
           <MetaItem label="Dates" value="14–21 Jun 2025" />
-          <MetaItem label="Travellers" value="2 adults" />
+          <MetaItem label="Travellers" value={`${travellersCount} ${travellersCount === 1 ? 'adult' : 'adults'}`} />
           <MetaItem label="Hospital" value={itin.hospital.split(' ').slice(0, 2).join(' ')} />
           <MetaItem label="Screening" value={`Day ${itin.appointmentDay} · ${itin.appointmentTime}`} />
         </div>

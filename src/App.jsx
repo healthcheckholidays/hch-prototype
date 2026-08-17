@@ -13,6 +13,7 @@ import ProfilePage from './pages/ProfilePage'
 import SearchResultsPage from './pages/SearchResultsPage'
 import ConfirmationPage from './pages/ConfirmationPage'
 import TestSelectorPage from './pages/TestSelectorPage'
+import BookingFlow from './pages/BookingFlow'
 
 export default function App() {
   return (
@@ -32,8 +33,8 @@ export default function App() {
         {/* Test selector */}
         <Route path="/test-selector" element={<TestSelectorPage />} />
 
-        {/* Booking flow — stub, extend with BookingFlow.jsx */}
-        <Route path="/book" element={<ShopPage />} />
+        {/* Booking flow — 10-step guided flow */}
+        <Route path="/book" element={<BookingFlow />} />
 
         {/* Booking confirmation */}
         <Route path="/confirmation/:bookingRef" element={<ConfirmationPage />} />

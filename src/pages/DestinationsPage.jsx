@@ -335,7 +335,7 @@ export default function DestinationsPage() {
           <button
             className="btn btn-primary btn-sm"
             style={{ width: '100%', justifyContent: 'center' }}
-            onClick={() => navigate('/shop')}
+            onClick={() => navigate('/book')}
           >
             Browse packages
           </button>

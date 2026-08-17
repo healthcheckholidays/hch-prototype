@@ -134,7 +134,7 @@ export default function PackageDetailPage() {
             <button
               className="btn btn-primary"
               style={{ width: '100%', justifyContent: 'center', padding: 10 }}
-              onClick={() => navigate('/confirmation/HCH-2025-0614')}
+              onClick={() => navigate('/book')}
             >
               Reserve screening slot
             </button>

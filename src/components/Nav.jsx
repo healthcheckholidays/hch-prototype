@@ -10,7 +10,7 @@ export function TopBar() {
         <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''} end>Home</NavLink>
         <NavLink to="/destinations" className={({ isActive }) => isActive ? 'active' : ''}>Destinations</NavLink>
         <NavLink to="/how-it-works" className={({ isActive }) => isActive ? 'active' : ''}>How it works</NavLink>
-        <NavLink to="/shop" className={({ isActive }) => isActive ? 'active' : ''}>Start planning</NavLink>
+        <NavLink to="/book" className={({ isActive }) => isActive ? 'active' : ''}>Start planning</NavLink>
         <NavLink to="/account" className={({ isActive }) => isActive ? 'active' : ''}>My account</NavLink>
       </div>
     </nav>

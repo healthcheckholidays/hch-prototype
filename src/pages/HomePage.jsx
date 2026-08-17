@@ -354,7 +354,7 @@ export default function HomePage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           {featured.map(pkg => <PackageCard key={pkg.id} pkg={pkg} />)}
         </div>
-        <button className="btn btn-primary" style={{ marginTop: 20 }} onClick={() => navigate('/shop')}>
+        <button className="btn btn-primary" style={{ marginTop: 20 }} onClick={() => navigate('/book')}>
           Browse all packages
         </button>
       </div>
@@ -401,7 +401,7 @@ export default function HomePage() {
               <button
                 className="btn btn-ghost btn-sm"
                 style={{ marginTop: 12 }}
-                onClick={() => navigate(`/shop`)}
+                onClick={() => navigate(`/book`)}
               >
                 See {tier.name.toLowerCase()} packages →
               </button>

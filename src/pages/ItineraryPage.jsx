@@ -21,6 +21,13 @@ export default function ItineraryPage() {
   const bookingRef = location.state?.bookingRef || 'HCH-2025-0614'
   const travellers = location.state?.guestName || 'Sarah Reynolds & James Reynolds'
   const travellersCount = location.state?.travellersCount || 2
+  const days = location.state?.dynamicDays || itin.days
+  const appointmentDay = location.state?.dynamicAppointmentDay || itin.appointmentDay
+  const appointmentTime = location.state?.dynamicAppointmentTime || itin.appointmentTime
+
+  function handleSavePdf() {
+    window.print()
+  }
 
   return (
     <div className="site-shell">
@@ -48,8 +55,13 @@ export default function ItineraryPage() {
           <MetaItem label="Dates" value="14–21 Jun 2025" />
           <MetaItem label="Travellers" value={`${travellersCount} ${travellersCount === 1 ? 'adult' : 'adults'}`} />
           <MetaItem label="Hospital" value={itin.hospital.split(' ').slice(0, 2).join(' ')} />
-          <MetaItem label="Screening" value={`Day ${itin.appointmentDay} · ${itin.appointmentTime}`} />
+          <MetaItem label="Screening" value={`Day ${appointmentDay} · ${appointmentTime}`} />
         </div>
+      </div>
+
+      {/* Top Save as PDF bar */}
+      <div className="no-print" style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px 24px', borderBottom: '0.5px solid rgba(0,0,0,0.08)' }}>
+        <button className="btn btn-primary btn-sm" onClick={handleSavePdf}>Save as PDF</button>
       </div>
 
       {/* Body */}
@@ -65,7 +77,7 @@ export default function ItineraryPage() {
           ))}
         </div>
 
-        {itin.days.map(day => (
+        {days.map(day => (
           <div key={day.day} style={{ marginTop: 22 }}>
 
             {/* Day label row */}
@@ -79,7 +91,7 @@ export default function ItineraryPage() {
                 borderRadius: 12,
                 whiteSpace: 'nowrap',
               }}>
-                {day.day === itin.appointmentDay ? 'Health check day' : `Day ${day.day}`}
+                {day.day === appointmentDay ? 'Health check day' : `Day ${day.day}`}
               </span>
               <span style={{ fontSize: 12, color: '#888' }}>{day.date}</span>
               <div style={{ flex: 1, height: 0.5, background: 'rgba(0,0,0,0.1)' }} />
@@ -97,7 +109,7 @@ export default function ItineraryPage() {
               <div className="hosp-info-card">
                 <h4 style={{ marginBottom: 8 }}>{itin.hospital} — International Health Centre</h4>
                 <div className="hosp-info-row"><span>Address</span><span>{itin.hospitalAddress}</span></div>
-                <div className="hosp-info-row"><span>Your appointment</span><span>{itin.appointmentTime} — arrive fasted</span></div>
+                <div className="hosp-info-row"><span>Your appointment</span><span>{appointmentTime} — arrive fasted</span></div>
                 <div className="hosp-info-row"><span>Expected duration</span><span>4–5 hours</span></div>
                 <div className="hosp-info-row"><span>What to bring</span><span>Passport · booking confirmation email</span></div>
                 <div className="hosp-info-row"><span>Getting there</span><span>Taxi from Shinjuku ~20 min · ¥1,800</span></div>
@@ -125,7 +137,7 @@ export default function ItineraryPage() {
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="btn btn-ghost btn-sm" onClick={() => navigate('/account')}>← Back to account</button>
-          <button className="btn btn-primary btn-sm" onClick={() => window.print()}>Print / Save as PDF</button>
+          <button className="btn btn-primary btn-sm" onClick={handleSavePdf}>Print / Save as PDF</button>
         </div>
       </div>
 

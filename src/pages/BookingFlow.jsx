@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TopBar, Footer, Breadcrumb } from '../components/Nav'
 import { PersistentSidebar } from '../components/PersistentSidebar'
@@ -8,17 +8,29 @@ import {
   COUNTRIES,
   PREP_INSTRUCTIONS,
   INTEREST_CATEGORIES,
-  COMPLIANCE_ITEMS,
-  buildItineraryPreview,
+  SCREENING_TILE,
+  TOKYO_ACTIVITIES,
+  TRAVEL_WINDOWS,
+  MEDICAL_QUESTIONS,
+  LEAD_CAPTURE_LEGAL_COPY,
+  stripeLegalCopy,
+  buildDynamicItinerary,
 } from '../data/bookingFlowData'
 
 const STEP_LABELS = ['Country', 'Clinic', 'Package', 'Prepare', 'Journey', 'Interests', 'Itinerary', 'Your info', 'Payment']
+const ACTIVE_CLINIC_NAME = "St. Luke's International Hospital"
+const DIAGNOSTIC_ICONS = [
+  { icon: '🧲', label: 'MRI' },
+  { icon: '🩻', label: 'X-Ray' },
+  { icon: '🔬', label: 'Colonoscopy' },
+]
 
 export default function BookingFlow() {
   const navigate = useNavigate()
   const [step, setStep] = useState(0)
   const [showCheckout, setShowCheckout] = useState(false)
   const [card, setCard] = useState({ number: '', expiry: '', cvc: '', name: '' })
+  const [tileActivities, setTileActivities] = useState(Array(8).fill(null))
 
   const [form, setForm] = useState({
     countryId: '',
@@ -29,7 +41,8 @@ export default function BookingFlow() {
     leadName: '',
     leadEmail: '',
     leadPhone: '',
-    compliance: { fasting: false, consent: false, accuracy: false },
+    travelWindow: '',
+    medical: { cardiovascular: null, implants: null, bloodThinners: null },
   })
 
   // ── Supabase-backed data ────────────────────────────────────────────────
@@ -135,8 +148,8 @@ export default function BookingFlow() {
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }))
 
-  function selectClinic(clinicId) {
-    setForm(f => ({ ...f, clinicId, packageId: '' }))
+  function setMedicalAnswer(id, value) {
+    setForm(f => ({ ...f, medical: { ...f.medical, [id]: value } }))
   }
 
   function toggleInterest(id) {
@@ -146,20 +159,43 @@ export default function BookingFlow() {
     }))
   }
 
-  function toggleCompliance(id) {
-    setForm(f => ({ ...f, compliance: { ...f.compliance, [id]: !f.compliance[id] } }))
+  function reportTileActivity(cellIndex, activity) {
+    setTileActivities(prev => {
+      if (prev[cellIndex] === activity) return prev
+      const next = [...prev]
+      next[cellIndex] = activity
+      return next
+    })
   }
 
   const selectedClinic = clinics.find(c => c.id === form.clinicId)
+  const activeClinic = clinics.find(c => c.name === ACTIVE_CLINIC_NAME) || clinics[0]
+  const activePackageOption = packageOptions.find(p => p.tier === 'comprehensive') || packageOptions[0]
+
   const selectedPackageOption = packageOptions.find(p => p.id === form.packageId) || null
   const activePackage = packageDetail || selectedPackageOption
   const total = activePackage ? activePackage.price_usd + COORD_FEE : 0
 
-  const itineraryPreview = useMemo(
-    () => buildItineraryPreview(form.interests),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [form.interests.join(',')]
-  )
+  // Country tile click — auto-advances (accordion collapses Step 1, expands Step 2).
+  function selectCountry(country) {
+    if (!country.active) return
+    set('countryId', country.id)
+    setStep(1)
+  }
+
+  // Clinic tile click — auto-advances.
+  function selectClinicAndAdvance(clinic) {
+    if (activeClinic && clinic.id !== activeClinic.id) return
+    setForm(f => ({ ...f, clinicId: clinic.id, packageId: '' }))
+    setStep(2)
+  }
+
+  // Package tile click — auto-advances.
+  function selectPackageAndAdvance(pkg) {
+    if (activePackageOption && pkg.id !== activePackageOption.id) return
+    set('packageId', pkg.id)
+    setStep(3)
+  }
 
   function goNext() {
     if (step === 4) {
@@ -180,12 +216,14 @@ export default function BookingFlow() {
   const canProceedLead =
     form.leadName.trim().length > 0 &&
     /\S+@\S+\.\S+/.test(form.leadEmail) &&
-    COMPLIANCE_ITEMS.every(c => form.compliance[c.id])
+    form.travelWindow &&
+    MEDICAL_QUESTIONS.every(q => form.medical[q.id] !== null)
 
   const canPay = card.number.trim() && card.expiry.trim() && card.cvc.trim() && card.name.trim()
 
   function handlePay() {
     const bookingRef = `HCH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+    const dynamicDays = buildDynamicItinerary(form.wantsLeisure ? tileActivities.filter(Boolean) : [])
     navigate('/itinerary/tokyo-7day', {
       state: {
         guestName: form.leadName,
@@ -193,8 +231,25 @@ export default function BookingFlow() {
         travellersCount: 1,
         packageTitle: activePackage?.name,
         clinicName: selectedClinic?.name,
+        dynamicDays,
+        dynamicAppointmentDay: 2,
+        dynamicAppointmentTime: SCREENING_TILE.time,
       },
     })
+  }
+
+  function collapsedSummary(i) {
+    switch (i) {
+      case 0: return 'Destination: Japan'
+      case 1: return `Clinic: ${selectedClinic?.name || '—'}`
+      case 2: return `Package: ${activePackage?.name || '—'}`
+      case 3: return 'Package details reviewed'
+      case 4: return `Journey: ${form.wantsLeisure ? 'Leisure itinerary planned' : 'Health check only'}`
+      case 5: return `Interests: ${form.interests.length} selected`
+      case 6: return 'Itinerary previewed'
+      case 7: return `Details: ${form.leadName || '—'}`
+      default: return STEP_LABELS[i]
+    }
   }
 
   return (
@@ -225,388 +280,457 @@ export default function BookingFlow() {
         })}
       </div>
 
-      <div className="two-col" style={{ gridTemplateColumns: '1fr 240px', alignItems: 'start' }}>
-        <div className="main-col">
+      <div className="two-col booking-two-col" style={{ gridTemplateColumns: '1fr 240px', alignItems: 'start' }}>
+        <div className="main-col booking-main-col">
 
-          {/* Step 0 — Country tiles */}
-          {step === 0 && (
-            <div>
-              <div className="inset">
-                <strong>Step 1 of 10 — Choose a destination.</strong> Japan is live on the platform today. Other destinations are coming soon.
+          {/* Collapsed history of completed steps */}
+          {STEP_LABELS.map((_, i) => {
+            if (i >= step) return null
+            if (form.wantsLeisure === false && (i === 5 || i === 6)) return null
+            return (
+              <div key={i} className="step-collapsed" onClick={() => setStep(i)}>
+                <span>✓ {collapsedSummary(i)}</span>
+                <span className="edit-hint">Edit</span>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
-                {COUNTRIES.map(c => (
-                  <button
-                    key={c.id}
-                    disabled={!c.active}
-                    onClick={() => c.active && set('countryId', c.id)}
-                    style={{
-                      background: form.countryId === c.id ? 'var(--hch-green-50)' : '#f9f9f7',
-                      border: form.countryId === c.id ? '2px solid var(--hch-green-800)' : 'var(--border)',
-                      borderRadius: 'var(--radius-md)',
-                      padding: '14px 8px',
-                      textAlign: 'center',
-                      cursor: c.active ? 'pointer' : 'not-allowed',
-                      opacity: c.active ? 1 : 0.4,
-                      position: 'relative',
-                    }}
-                  >
-                    {!c.active && (
-                      <span style={{ position: 'absolute', top: 5, right: 5, fontSize: 8, background: '#888', color: '#fff', padding: '1px 4px', borderRadius: 3 }}>
-                        Soon
-                      </span>
-                    )}
-                    <div style={{ fontSize: 24, marginBottom: 4 }}>{c.flag}</div>
-                    <div style={{ fontSize: 12, fontWeight: 500 }}>{c.name}</div>
-                    <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}>{c.tagline}</div>
-                  </button>
-                ))}
-              </div>
-              <StepNav onNext={goNext} canNext={!!form.countryId} />
-            </div>
-          )}
+            )
+          })}
 
-          {/* Step 1 — Clinic list (live from Supabase) */}
-          {step === 1 && (
-            <div>
-              <div className="inset">
-                <strong>Step 2 of 10 — Choose a clinic.</strong> All Japan clinics are JCI-accredited or hold equivalent international certification.
-              </div>
+          {/* Active step content */}
+          <div className="step-expand" key={step}>
 
-              {clinicsLoading && <LoadingBlock label="Loading clinics…" />}
-              {!clinicsLoading && clinicsError && (
-                <ErrorBlock message={clinicsError} onRetry={() => setClinicsRetry(n => n + 1)} />
-              )}
-
-              {!clinicsLoading && !clinicsError && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {clinics.map(clinic => (
-                    <label
-                      key={clinic.id}
-                      className="radio-item"
-                      style={{ alignItems: 'flex-start', border: form.clinicId === clinic.id ? '2px solid var(--hch-green-800)' : undefined }}
-                    >
-                      <input
-                        type="radio"
-                        name="clinic"
-                        checked={form.clinicId === clinic.id}
-                        onChange={() => selectClinic(clinic.id)}
-                        style={{ marginTop: 4 }}
-                      />
-                      <div style={{ flex: 1, display: 'flex', gap: 12 }}>
-                        <div style={{
-                          width: 72, height: 72, borderRadius: 'var(--radius-md)', flexShrink: 0, overflow: 'hidden',
-                          background: '#f5f5f3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
-                        }}>
-                          {clinic.image_url ? (
-                            <img
-                              src={clinic.image_url}
-                              alt={clinic.name}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                              onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }}
-                            />
-                          ) : null}
-                          <span style={{ display: clinic.image_url ? 'none' : 'flex' }}>{clinic.flag}</span>
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: 500, fontSize: 14 }}>{clinic.flag} {clinic.name}</div>
-                          <div style={{ fontSize: 11, color: '#888', margin: '2px 0 6px' }}>{clinic.city} · {clinic.accreditation}</div>
-                          {clinic.specialties && <div style={{ fontSize: 12, color: '#555' }}>{clinic.specialties}</div>}
-                          {clinic.price_min_usd > 0 && (
-                            <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
-                              From ${clinic.price_min_usd}{clinic.price_max_usd > 0 ? `–$${clinic.price_max_usd}` : ''}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </label>
-                  ))}
-                  {clinics.length === 0 && (
-                    <div style={{ padding: '16px 0', color: '#888', fontSize: 13 }}>No clinics available right now.</div>
-                  )}
+            {/* Step 0 — Country tiles */}
+            {step === 0 && (
+              <div>
+                <div className="inset">
+                  <strong>Step 1 of 10 — Choose a destination.</strong> Japan is live on the platform today. Other destinations are coming soon.
                 </div>
-              )}
-
-              <StepNav onBack={goBack} onNext={goNext} canNext={!!form.clinicId} />
-            </div>
-          )}
-
-          {/* Step 2 — Package tiles (live from Supabase) */}
-          {step === 2 && (
-            <div>
-              <div className="inset">
-                <strong>Step 3 of 10 — Choose your screening level.</strong> All tiers are available at {selectedClinic?.name}.
-              </div>
-
-              {packagesLoading && <LoadingBlock label="Loading packages…" />}
-              {!packagesLoading && packagesError && (
-                <ErrorBlock message={packagesError} onRetry={() => setPackagesRetry(n => n + 1)} />
-              )}
-
-              {!packagesLoading && !packagesError && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {packageOptions.map(pkg => (
-                    <div
-                      key={pkg.id}
-                      onClick={() => set('packageId', pkg.id)}
-                      style={{
-                        background: pkg.bg_color || 'var(--hch-green-50)',
-                        border: form.packageId === pkg.id ? '2px solid var(--hch-green-800)' : 'var(--border)',
-                        borderRadius: 'var(--radius-lg)',
-                        padding: '16px 18px',
-                        cursor: 'pointer',
-                        position: 'relative',
-                      }}
-                    >
-                      {(pkg.badge || pkg.tier === 'comprehensive') && (
-                        <span style={{ position: 'absolute', top: 14, right: 14, background: tierAccent(pkg.tier), color: '#fff', fontSize: 10, fontWeight: 500, padding: '2px 8px', borderRadius: 4 }}>
-                          {pkg.badge || 'Most popular'}
-                        </span>
-                      )}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                        <div>
-                          <div style={{ fontSize: 15, fontWeight: 500, color: tierAccent(pkg.tier) }}>{pkg.name}</div>
-                          <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>{pkg.duration} · {capitalize(pkg.tier)}</div>
-                        </div>
-                        <div style={{ fontSize: 18, fontWeight: 500, color: tierAccent(pkg.tier) }}>
-                          ${pkg.price_usd}<span style={{ fontSize: 10, color: '#888', fontWeight: 400 }}>/person</span>
-                        </div>
-                      </div>
-                      {pkg.description && <div style={{ fontSize: 12, color: '#444', lineHeight: 1.5 }}>{pkg.description}</div>}
-                      <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
-                        {pkg.is_jci && <span className="tag tag-green">JCI accredited</span>}
-                        {pkg.is_english && <span className="tag tag-green">English support</span>}
-                        {pkg.rating > 0 && <span className="tag">★ {pkg.rating} · {pkg.review_count} reviews</span>}
-                      </div>
-                    </div>
-                  ))}
-                  {packageOptions.length === 0 && (
-                    <div style={{ padding: '16px 0', color: '#888', fontSize: 13 }}>No packages available for this clinic yet.</div>
-                  )}
-                </div>
-              )}
-
-              <StepNav onBack={goBack} onNext={goNext} canNext={!!form.packageId} />
-            </div>
-          )}
-
-          {/* Step 3 — Package breakdown + prep instructions (live from Supabase) */}
-          {step === 3 && (
-            <div>
-              <div className="inset">
-                <strong>Step 4 of 10 — Your package in full.</strong> Here's exactly what's included and how to prepare.
-              </div>
-
-              {detailLoading && <LoadingBlock label="Loading package details…" />}
-              {!detailLoading && detailError && (
-                <ErrorBlock message={detailError} onRetry={() => setDetailRetry(n => n + 1)} />
-              )}
-
-              {!detailLoading && !detailError && activePackage && (
-                <>
-                  <div style={{ border: 'var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', marginBottom: 16 }}>
-                    <div style={{ background: activePackage.bg_color || 'var(--hch-green-50)', padding: '14px 16px' }}>
-                      <div style={{ fontSize: 16, fontWeight: 500, color: tierAccent(activePackage.tier) }}>{activePackage.name}</div>
-                      <div style={{ fontSize: 12, color: '#555', marginTop: 2 }}>{selectedClinic?.name} · {activePackage.duration}</div>
-                    </div>
-                    <div style={{ padding: '4px 0' }}>
-                      {groupByCategory(standardTests).map(([category, items]) => (
-                        <div key={category}>
-                          <div style={{ padding: '8px 16px 2px', fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#888' }}>
-                            {category}
-                          </div>
-                          {items.map(test => (
-                            <div key={test.id} style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '6px 16px', fontSize: 13 }}>
-                              <CheckDot /> {test.name}
-                            </div>
-                          ))}
-                        </div>
-                      ))}
-                      {standardTests.length === 0 && (
-                        <div style={{ padding: '10px 16px', color: '#888', fontSize: 12 }}>Test list unavailable right now.</div>
-                      )}
-                    </div>
-                  </div>
-
-                  <h4 style={{ marginBottom: 8 }}>How to prepare</h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
-                    {PREP_INSTRUCTIONS.map((tip, i) => (
-                      <div key={i} style={{ display: 'flex', gap: 10, fontSize: 13, color: '#444', lineHeight: 1.6 }}>
-                        <span style={{ color: 'var(--hch-green-600)', fontWeight: 500, flexShrink: 0 }}>→</span>{tip}
-                      </div>
-                    ))}
-                  </div>
-
-                  <div style={{ background: '#f5f5f3', borderRadius: 10, padding: '10px 14px', fontSize: 12, color: '#555' }}>
-                    <span style={{ fontWeight: 500, color: '#111' }}>Total for this package: </span>
-                    ${activePackage.price_usd} screening + ${COORD_FEE} coordination fee = ${activePackage.price_usd + COORD_FEE}
-                  </div>
-                </>
-              )}
-
-              <StepNav onBack={goBack} onNext={goNext} />
-            </div>
-          )}
-
-          {/* Step 4 — Journey fork */}
-          {step === 4 && (
-            <div>
-              <div className="inset">
-                <strong>Step 5 of 10 — Plan your journey.</strong> Would you like us to build leisure activities around your health check day?
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                <button onClick={() => set('wantsLeisure', true)} style={forkCardStyle(form.wantsLeisure === true)}>
-                  <div style={{ fontSize: 28, marginBottom: 8 }}>🗺️</div>
-                  <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Yes, plan my leisure time</div>
-                  <div style={{ fontSize: 12, color: '#666' }}>We'll build a personalised itinerary around your interests.</div>
-                </button>
-                <button onClick={() => set('wantsLeisure', false)} style={forkCardStyle(form.wantsLeisure === false)}>
-                  <div style={{ fontSize: 28, marginBottom: 8 }}>🩺</div>
-                  <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>No, just the health check</div>
-                  <div style={{ fontSize: 12, color: '#666' }}>Skip straight to booking — no itinerary needed.</div>
-                </button>
-              </div>
-              <StepNav onBack={goBack} onNext={goNext} canNext={form.wantsLeisure !== null} />
-            </div>
-          )}
-
-          {/* Step 5 — Interests grid */}
-          {step === 5 && (
-            <div>
-              <div className="inset">
-                <strong>Step 6 of 10 — What are you interested in?</strong> Select at least one — we'll use this to build your itinerary preview.
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-                {INTEREST_CATEGORIES.map(cat => {
-                  const isSel = form.interests.includes(cat.id)
-                  return (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
+                  {COUNTRIES.map(c => (
                     <button
-                      key={cat.id}
-                      onClick={() => toggleInterest(cat.id)}
+                      key={c.id}
+                      disabled={!c.active}
+                      onClick={() => selectCountry(c)}
+                      className={c.active ? 'tile-active-hover' : 'tile-locked'}
                       style={{
-                        background: isSel ? 'var(--hch-green-50)' : '#fff',
-                        border: isSel ? '2px solid var(--hch-green-800)' : 'var(--border)',
+                        background: '#f9f9f7',
+                        border: 'var(--border)',
                         borderRadius: 'var(--radius-md)',
                         padding: '14px 8px',
                         textAlign: 'center',
-                        cursor: 'pointer',
+                        cursor: c.active ? 'pointer' : 'not-allowed',
+                        position: 'relative',
                       }}
                     >
-                      <div style={{ fontSize: 24, marginBottom: 4 }}>{cat.emoji}</div>
-                      <div style={{ fontSize: 12, fontWeight: isSel ? 500 : 400, color: isSel ? 'var(--hch-green-800)' : '#333' }}>{cat.label}</div>
+                      {!c.active && (
+                        <span style={{ position: 'absolute', top: 5, right: 5, fontSize: 8, background: '#888', color: '#fff', padding: '1px 4px', borderRadius: 3 }}>
+                          Soon
+                        </span>
+                      )}
+                      <div style={{ fontSize: 24, marginBottom: 4 }}>{c.flag}</div>
+                      <div style={{ fontSize: 12, fontWeight: 500 }}>{c.name}</div>
+                      <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}>{c.tagline}</div>
                     </button>
-                  )
-                })}
-              </div>
-              <StepNav onBack={goBack} onNext={goNext} canNext={form.interests.length > 0} />
-            </div>
-          )}
-
-          {/* Step 6 — 3x3 dynamic itinerary grid */}
-          {step === 6 && (
-            <div>
-              <div className="inset">
-                <strong>Step 7 of 10 — Your itinerary preview.</strong> Based on your interests — the full day-by-day plan is finalised after booking.
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-                {itineraryPreview.map((cell, i) => {
-                  const cat = INTEREST_CATEGORIES.find(c => c.id === cell.interestId)
-                  return (
-                    <div key={i} style={{ border: 'var(--border)', borderRadius: 'var(--radius-md)', padding: '12px 10px', background: '#fff' }}>
-                      <div style={{ fontSize: 18, marginBottom: 6 }}>{cat?.emoji}</div>
-                      <div style={{ fontSize: 12, fontWeight: 500, lineHeight: 1.4 }}>{cell.activity}</div>
-                      <div style={{ fontSize: 10, color: '#888', marginTop: 4 }}>{cat?.label}</div>
-                    </div>
-                  )
-                })}
-              </div>
-              <StepNav onBack={goBack} onNext={goNext} />
-            </div>
-          )}
-
-          {/* Step 7 — Lead capture + compliance toggles */}
-          {step === 7 && (
-            <div>
-              <div className="inset">
-                <strong>Step {form.wantsLeisure ? 8 : 6} of 10 — Your details.</strong> We'll use this to confirm your slot with {selectedClinic?.name}.
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Full name</label>
-                <input className="form-input" value={form.leadName} onChange={e => set('leadName', e.target.value)} placeholder="Sarah Reynolds" />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <div className="form-group">
-                  <label className="form-label">Email</label>
-                  <input className="form-input" type="email" value={form.leadEmail} onChange={e => set('leadEmail', e.target.value)} placeholder="you@email.com" />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Phone</label>
-                  <input className="form-input" type="tel" value={form.leadPhone} onChange={e => set('leadPhone', e.target.value)} placeholder="+1 555 000 0000" />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label" style={{ marginBottom: 8 }}>Health compliance</label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {COMPLIANCE_ITEMS.map(item => (
-                    <label key={item.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, cursor: 'pointer', fontSize: 13 }}>
-                      <input
-                        type="checkbox"
-                        checked={form.compliance[item.id]}
-                        onChange={() => toggleCompliance(item.id)}
-                        style={{ accentColor: 'var(--hch-green-800)', width: 15, height: 15, marginTop: 2, flexShrink: 0 }}
-                      />
-                      {item.label}
-                    </label>
                   ))}
                 </div>
               </div>
+            )}
 
-              <StepNav onBack={goBack} onNext={goNext} canNext={canProceedLead} />
-            </div>
-          )}
-
-          {/* Step 8 — Checkout summary + Stripe-style modal trigger */}
-          {step === 8 && activePackage && (
-            <div>
-              <div className="inset">
-                <strong>Step {form.wantsLeisure ? 9 : 7} of 10 — Payment.</strong> Secure checkout in USD. No charge until your slot is confirmed by the hospital.
-              </div>
-
-              <div style={{ border: 'var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', marginBottom: 16 }}>
-                <div style={{ background: activePackage.bg_color || 'var(--hch-green-50)', height: 70, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30 }}>
-                  {selectedClinic?.flag || '🗾'}
+            {/* Step 1 — Clinic list (live from Supabase; only one clinic active) */}
+            {step === 1 && (
+              <div>
+                <div className="inset">
+                  <strong>Step 2 of 10 — Choose a clinic.</strong> All Japan clinics are JCI-accredited or hold equivalent international certification.
                 </div>
-                <div style={{ padding: '14px 16px' }}>
-                  <div style={{ fontSize: 15, fontWeight: 500 }}>{activePackage.name} — {selectedClinic?.name}</div>
-                  <div style={{ fontSize: 12, color: '#888', margin: '2px 0 10px' }}>{form.leadName} · {form.leadEmail}</div>
-                  <div className="bb-breakdown" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
-                    <div className="bb-line"><span>Screening</span><span>${activePackage.price_usd}</span></div>
-                    <div className="bb-line"><span>Coordination fee</span><span>${COORD_FEE}</span></div>
-                    <div className="bb-total"><span>Total (USD)</span><span>${total}</span></div>
+
+                {clinicsLoading && <LoadingBlock label="Loading clinics…" />}
+                {!clinicsLoading && clinicsError && (
+                  <ErrorBlock message={clinicsError} onRetry={() => setClinicsRetry(n => n + 1)} />
+                )}
+
+                {!clinicsLoading && !clinicsError && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {clinics.map(clinic => {
+                      const isActiveClinic = activeClinic && clinic.id === activeClinic.id
+                      return (
+                        <label
+                          key={clinic.id}
+                          className={`radio-item ${isActiveClinic ? 'tile-active-hover' : 'tile-locked'}`}
+                          onClick={() => selectClinicAndAdvance(clinic)}
+                          style={{ alignItems: 'flex-start' }}
+                        >
+                          <input
+                            type="radio"
+                            name="clinic"
+                            disabled={!isActiveClinic}
+                            checked={form.clinicId === clinic.id}
+                            readOnly
+                            style={{ marginTop: 4 }}
+                          />
+                          <div style={{ flex: 1, display: 'flex', gap: 12 }}>
+                            <div style={{
+                              width: 72, height: 72, borderRadius: 'var(--radius-md)', flexShrink: 0, overflow: 'hidden',
+                              background: '#f5f5f3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
+                            }}>
+                              {clinic.image_url ? (
+                                <img
+                                  src={clinic.image_url}
+                                  alt={clinic.name}
+                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                  onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }}
+                                />
+                              ) : null}
+                              <span style={{ display: clinic.image_url ? 'none' : 'flex' }}>{clinic.flag}</span>
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                                <div style={{ fontWeight: 500, fontSize: 14 }}>{clinic.flag} {clinic.name}</div>
+                                {!isActiveClinic && <span className="tag" style={{ fontSize: 9, flexShrink: 0 }}>Fully booked</span>}
+                              </div>
+                              <div style={{ fontSize: 11, color: '#888', margin: '2px 0 6px' }}>{clinic.city} · {clinic.accreditation}</div>
+                              {clinic.specialties && <div style={{ fontSize: 12, color: '#555' }}>{clinic.specialties}</div>}
+                              {clinic.price_min_usd > 0 && (
+                                <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
+                                  From ${clinic.price_min_usd}{clinic.price_max_usd > 0 ? `–$${clinic.price_max_usd}` : ''}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </label>
+                      )
+                    })}
+                    {clinics.length === 0 && (
+                      <div style={{ padding: '16px 0', color: '#888', fontSize: 13 }}>No clinics available right now.</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Step 2 — Package tiles (live from Supabase; side by side; only one active) */}
+            {step === 2 && (
+              <div>
+                <div className="inset">
+                  <strong>Step 3 of 10 — Choose your screening level.</strong> Our most comprehensive tier is available now at {selectedClinic?.name}.
+                </div>
+
+                {packagesLoading && <LoadingBlock label="Loading packages…" />}
+                {!packagesLoading && packagesError && (
+                  <ErrorBlock message={packagesError} onRetry={() => setPackagesRetry(n => n + 1)} />
+                )}
+
+                {!packagesLoading && !packagesError && (
+                  <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.max(1, Math.min(packageOptions.length, 3))}, 1fr)`, gap: 10 }}>
+                    {packageOptions.map(pkg => {
+                      const isActivePkg = activePackageOption && pkg.id === activePackageOption.id
+                      return (
+                        <div
+                          key={pkg.id}
+                          onClick={() => selectPackageAndAdvance(pkg)}
+                          className={isActivePkg ? 'tile-active-hover' : 'tile-locked'}
+                          style={{
+                            border: form.packageId === pkg.id ? '2px solid var(--hch-green-800)' : 'var(--border)',
+                            borderRadius: 'var(--radius-lg)',
+                            overflow: 'hidden',
+                            cursor: 'pointer',
+                            position: 'relative',
+                            background: '#fff',
+                            display: 'flex',
+                            flexDirection: 'column',
+                          }}
+                        >
+                          {(pkg.badge || pkg.tier === 'comprehensive') && (
+                            <span style={{ position: 'absolute', top: 8, right: 8, zIndex: 1, background: tierAccent(pkg.tier), color: '#fff', fontSize: 9, fontWeight: 500, padding: '2px 7px', borderRadius: 4 }}>
+                              {pkg.badge || 'Most popular'}
+                            </span>
+                          )}
+                          {/* Lifestyle image header (or colour fallback) */}
+                          <div style={{
+                            height: 72, background: pkg.image_url ? undefined : packageFallbackColor(pkg.tier),
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, overflow: 'hidden',
+                          }}>
+                            {pkg.image_url ? (
+                              <img src={pkg.image_url} alt={pkg.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (selectedClinic?.flag || '🗾')}
+                          </div>
+                          <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ fontSize: 14, fontWeight: 500, color: tierAccent(pkg.tier) }}>{pkg.name}</div>
+                            <div style={{ fontSize: 11, color: '#666', margin: '2px 0 6px' }}>{pkg.duration} · {capitalize(pkg.tier)}</div>
+                            <div style={{ fontSize: 16, fontWeight: 500, color: tierAccent(pkg.tier), marginBottom: 6 }}>
+                              ${pkg.price_usd}<span style={{ fontSize: 10, color: '#888', fontWeight: 400 }}>/person</span>
+                            </div>
+                            {pkg.description && <div style={{ fontSize: 11, color: '#444', lineHeight: 1.5, marginBottom: 8 }}>{pkg.description}</div>}
+                            <IconRow />
+                            {!isActivePkg && (
+                              <div style={{ marginTop: 8, fontSize: 10, color: '#aaa' }}>Not available for this booking</div>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                    {packageOptions.length === 0 && (
+                      <div style={{ padding: '16px 0', color: '#888', fontSize: 13 }}>No packages available for this clinic yet.</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Step 3 — Package breakdown + prep instructions (live from Supabase) */}
+            {step === 3 && (
+              <div>
+                <div className="inset">
+                  <strong>Step 4 of 10 — Your package in full.</strong> Here's exactly what's included and how to prepare.
+                </div>
+
+                {detailLoading && <LoadingBlock label="Loading package details…" />}
+                {!detailLoading && detailError && (
+                  <ErrorBlock message={detailError} onRetry={() => setDetailRetry(n => n + 1)} />
+                )}
+
+                {!detailLoading && !detailError && activePackage && (
+                  <>
+                    <div style={{ border: 'var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', marginBottom: 16 }}>
+                      <div style={{ background: activePackage.bg_color || 'var(--hch-green-50)', padding: '14px 16px' }}>
+                        <div style={{ fontSize: 16, fontWeight: 500, color: tierAccent(activePackage.tier) }}>{activePackage.name}</div>
+                        <div style={{ fontSize: 12, color: '#555', marginTop: 2 }}>{selectedClinic?.name} · Estimated {activePackage.duration} in clinic</div>
+                      </div>
+                      <div style={{ padding: '4px 0' }}>
+                        {groupByCategory(standardTests).map(([category, items]) => (
+                          <div key={category}>
+                            <div style={{ padding: '8px 16px 2px', fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#888' }}>
+                              {category}
+                            </div>
+                            {items.map(test => (
+                              <div key={test.id} style={{ display: 'flex', gap: 8, alignItems: 'center', padding: '6px 16px', fontSize: 13 }}>
+                                <CheckDot /> {test.name}
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                        {standardTests.length === 0 && (
+                          <div style={{ padding: '10px 16px', color: '#888', fontSize: 12 }}>Test list unavailable right now.</div>
+                        )}
+                      </div>
+                    </div>
+
+                    <h4 style={{ marginBottom: 8 }}>How to prepare</h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
+                      {PREP_INSTRUCTIONS.map((tip, i) => (
+                        <div key={i} style={{ display: 'flex', gap: 10, fontSize: 13, color: '#444', lineHeight: 1.6 }}>
+                          <span style={{ color: 'var(--hch-green-600)', fontWeight: 500, flexShrink: 0 }}>→</span>{tip}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ background: '#f5f5f3', borderRadius: 10, padding: '10px 14px', fontSize: 12, color: '#555' }}>
+                      <span style={{ fontWeight: 500, color: '#111' }}>Total for this package: </span>
+                      ${activePackage.price_usd} screening + ${COORD_FEE} coordination fee = ${activePackage.price_usd + COORD_FEE}
+                    </div>
+                  </>
+                )}
+
+                <StepNav onBack={goBack} onNext={goNext} label="Confirm Package & Proceed" />
+              </div>
+            )}
+
+            {/* Step 4 — Journey fork (high-contrast) */}
+            {step === 4 && (
+              <div>
+                <div className="inset">
+                  <strong>Step 5 of 10 — Plan your journey.</strong> Would you like us to build leisure activities around your health check day?
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <button onClick={() => set('wantsLeisure', true)} style={forkCardStyle(form.wantsLeisure === true, true)}>
+                    <div style={{ fontSize: 28, marginBottom: 8 }}>🗺️</div>
+                    <div style={{ fontSize: 14, fontWeight: 500 }}>Continue to customize my leisure itinerary</div>
+                  </button>
+                  <button onClick={() => set('wantsLeisure', false)} style={forkCardStyle(form.wantsLeisure === false, false)}>
+                    <div style={{ fontSize: 28, marginBottom: 8 }}>🩺</div>
+                    <div style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.5 }}>
+                      I would like to plan my own leisure activities. Just provide me with discounted packages from our partners for my screening.
+                    </div>
+                  </button>
+                </div>
+                <StepNav onBack={goBack} onNext={goNext} canNext={form.wantsLeisure !== null} />
+              </div>
+            )}
+
+            {/* Step 5 — Interests grid (6 fixed categories) */}
+            {step === 5 && (
+              <div>
+                <div className="inset">
+                  <strong>Step 6 of 10 — What are you interested in?</strong> Select at least one — every combination draws from our curated Tokyo experience pool.
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+                  {INTEREST_CATEGORIES.map(cat => {
+                    const isSel = form.interests.includes(cat.id)
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => toggleInterest(cat.id)}
+                        style={{
+                          background: isSel ? 'var(--hch-green-50)' : '#fff',
+                          border: isSel ? '2px solid var(--hch-green-800)' : 'var(--border)',
+                          borderRadius: 'var(--radius-md)',
+                          padding: '14px 8px',
+                          textAlign: 'center',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <div style={{ fontSize: 24, marginBottom: 4 }}>{cat.emoji}</div>
+                        <div style={{ fontSize: 12, fontWeight: isSel ? 500 : 400, color: isSel ? 'var(--hch-green-800)' : '#333' }}>{cat.label}</div>
+                      </button>
+                    )
+                  })}
+                </div>
+                <StepNav onBack={goBack} onNext={goNext} canNext={form.interests.length > 0} label="Generate My Itinerary" />
+              </div>
+            )}
+
+            {/* Step 6 — 3x3 itinerary grid: locked centre screening tile + 8 flip tiles */}
+            {step === 6 && (
+              <div>
+                <div className="inset">
+                  <strong>Step 7 of 10 — Your itinerary preview.</strong> Your screening slot is locked in the centre. Tap any other tile to see alternative experiences.
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+                  {[0, 1, 2, 3, 'center', 4, 5, 6, 7].map((cell, gridPos) => (
+                    cell === 'center' ? (
+                      <div key="center" style={{
+                        height: 96, border: '2px solid var(--hch-green-800)', borderRadius: 'var(--radius-md)',
+                        background: 'var(--hch-green-800)', color: '#fff', display: 'flex', flexDirection: 'column',
+                        alignItems: 'center', justifyContent: 'center', padding: 8, position: 'relative', textAlign: 'center',
+                      }}>
+                        <span style={{ position: 'absolute', top: 6, right: 6, fontSize: 8, fontWeight: 500, background: 'rgba(255,255,255,0.25)', padding: '2px 6px', borderRadius: 3 }}>
+                          🔒 Confirmed
+                        </span>
+                        <div style={{ fontSize: 18, marginBottom: 4 }}>🩺</div>
+                        <div style={{ fontSize: 11, fontWeight: 500 }}>{SCREENING_TILE.title}</div>
+                        <div style={{ fontSize: 10, opacity: 0.75, marginTop: 2 }}>{SCREENING_TILE.time}</div>
+                      </div>
+                    ) : (
+                      <FlipTile
+                        key={cell}
+                        pool={TOKYO_ACTIVITIES}
+                        initialIndex={cell}
+                        onActivityChange={activity => reportTileActivity(cell, activity)}
+                      />
+                    )
+                  ))}
+                </div>
+                <StepNav onBack={goBack} onNext={goNext} />
+              </div>
+            )}
+
+            {/* Step 7 — Lead capture + medical intake */}
+            {step === 7 && (
+              <div>
+                <div className="inset">
+                  <strong>Step {form.wantsLeisure ? 8 : 6} of 10 — Your details.</strong> We'll use this to confirm your slot with {selectedClinic?.name}.
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Full name</label>
+                  <input className="form-input" value={form.leadName} onChange={e => set('leadName', e.target.value)} placeholder="Sarah Reynolds" />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div className="form-group">
+                    <label className="form-label">Email</label>
+                    <input className="form-input" type="email" value={form.leadEmail} onChange={e => set('leadEmail', e.target.value)} placeholder="you@email.com" />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Phone</label>
+                    <input className="form-input" type="tel" value={form.leadPhone} onChange={e => set('leadPhone', e.target.value)} placeholder="+1 555 000 0000" />
                   </div>
                 </div>
+
+                <div className="form-group">
+                  <label className="form-label">Preferred travel window</label>
+                  <select className="form-select" value={form.travelWindow} onChange={e => set('travelWindow', e.target.value)}>
+                    <option value="">Select a month</option>
+                    {TRAVEL_WINDOWS.map(w => <option key={w} value={w}>{w}</option>)}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" style={{ marginBottom: 8 }}>Medical intake</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {MEDICAL_QUESTIONS.map(q => (
+                      <div key={q.id}>
+                        <div style={{ fontSize: 13, marginBottom: 6 }}>{q.label}</div>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          {['Yes', 'No'].map(opt => {
+                            const active = form.medical[q.id] === opt
+                            return (
+                              <button
+                                key={opt}
+                                type="button"
+                                onClick={() => setMedicalAnswer(q.id, opt)}
+                                style={{
+                                  padding: '6px 20px', borderRadius: 'var(--radius-md)', fontSize: 12, cursor: 'pointer',
+                                  border: active ? '2px solid var(--hch-green-800)' : 'var(--border)',
+                                  background: active ? 'var(--hch-green-50)' : '#fff',
+                                  color: active ? 'var(--hch-green-800)' : '#444',
+                                  fontWeight: active ? 500 : 400,
+                                }}
+                              >
+                                {opt}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="inset">{LEAD_CAPTURE_LEGAL_COPY}</div>
+
+                <StepNav onBack={goBack} onNext={goNext} canNext={canProceedLead} />
               </div>
+            )}
 
-              <button
-                className="btn btn-primary"
-                style={{ width: '100%', justifyContent: 'center', padding: 12, fontSize: 14 }}
-                onClick={() => setShowCheckout(true)}
-              >
-                Continue to secure payment — ${total}
-              </button>
+            {/* Step 8 — Checkout summary + Stripe-style modal trigger */}
+            {step === 8 && activePackage && (
+              <div>
+                <div className="inset">
+                  <strong>Step {form.wantsLeisure ? 9 : 7} of 10 — Payment.</strong> Secure checkout in USD. No charge until your slot is confirmed by the hospital.
+                </div>
 
-              <div style={{ marginTop: 10 }}>
-                <button className="btn btn-ghost btn-sm" onClick={goBack}>← Back</button>
+                <div style={{ border: 'var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden', marginBottom: 16 }}>
+                  <div style={{ background: activePackage.bg_color || 'var(--hch-green-50)', height: 70, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 30 }}>
+                    {selectedClinic?.flag || '🗾'}
+                  </div>
+                  <div style={{ padding: '14px 16px' }}>
+                    <div style={{ fontSize: 15, fontWeight: 500 }}>{activePackage.name} — {selectedClinic?.name}</div>
+                    <div style={{ fontSize: 12, color: '#888', margin: '2px 0 10px' }}>{form.leadName} · {form.leadEmail}</div>
+                    <div className="bb-breakdown" style={{ marginTop: 0, paddingTop: 0, borderTop: 'none' }}>
+                      <div className="bb-line"><span>Screening</span><span>${activePackage.price_usd}</span></div>
+                      <div className="bb-line"><span>Coordination fee</span><span>${COORD_FEE}</span></div>
+                      <div className="bb-total"><span>Total (USD)</span><span>${total}</span></div>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  className="btn btn-primary"
+                  style={{ width: '100%', justifyContent: 'center', padding: 12, fontSize: 14 }}
+                  onClick={() => setShowCheckout(true)}
+                >
+                  Continue to secure payment — ${total}
+                </button>
+
+                <div style={{ marginTop: 10 }}>
+                  <button className="btn btn-ghost btn-sm" onClick={goBack}>← Back</button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
+          </div>
         </div>
 
         {/* Persistent sidebar */}
-        <div className="side-col">
+        <div className="side-col booking-side-col">
           <PersistentSidebar
             country={form.countryId ? 'Japan' : null}
             clinicName={selectedClinic?.name || null}
@@ -627,8 +751,16 @@ export default function BookingFlow() {
             </div>
             <div style={{ padding: 20 }}>
               <div style={{ fontSize: 12, color: '#888', marginBottom: 2 }}>Amount due</div>
-              <div style={{ fontSize: 28, fontWeight: 500, marginBottom: 16 }}>
+              <div style={{ fontSize: 28, fontWeight: 500, marginBottom: 10 }}>
                 ${total.toFixed(2)} <span style={{ fontSize: 13, color: '#888', fontWeight: 400 }}>USD</span>
+              </div>
+
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
+                <span className="tag tag-green">🔒 Stripe Verified</span>
+                <span className="tag"> Apple Pay</span>
+                <span className="tag">VISA</span>
+                <span className="tag">Mastercard</span>
+                <span className="tag">AMEX</span>
               </div>
 
               <div className="form-group">
@@ -674,7 +806,11 @@ export default function BookingFlow() {
               >
                 Pay ${total.toFixed(2)}
               </button>
-              <div style={{ fontSize: 10, color: '#aaa', textAlign: 'center', marginTop: 10 }}>
+
+              <div style={{ fontSize: 10, color: '#888', textAlign: 'center', marginTop: 10, lineHeight: 1.5 }}>
+                {stripeLegalCopy(selectedClinic?.name)}
+              </div>
+              <div style={{ fontSize: 9, color: '#bbb', textAlign: 'center', marginTop: 6 }}>
                 Demo checkout — no real payment is processed.
               </div>
             </div>
@@ -687,7 +823,7 @@ export default function BookingFlow() {
   )
 }
 
-function StepNav({ onBack, onNext, canNext = true }) {
+function StepNav({ onBack, onNext, canNext = true, label = 'Save and continue' }) {
   return (
     <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
       <button
@@ -696,21 +832,33 @@ function StepNav({ onBack, onNext, canNext = true }) {
         disabled={!canNext}
         style={{ opacity: canNext ? 1 : 0.4, cursor: canNext ? 'pointer' : 'not-allowed' }}
       >
-        Save and continue
+        {label}
       </button>
       {onBack && <button className="btn btn-ghost" onClick={onBack}>← Back</button>}
     </div>
   )
 }
 
-function forkCardStyle(active) {
+function forkCardStyle(active, isPrimary) {
+  if (isPrimary) {
+    return {
+      background: active ? 'var(--hch-green-700)' : 'var(--hch-green-800)',
+      border: active ? '2px solid #fff' : '2px solid var(--hch-green-800)',
+      borderRadius: 'var(--radius-lg)',
+      padding: '20px 16px',
+      textAlign: 'left',
+      cursor: 'pointer',
+      color: '#fff',
+    }
+  }
   return {
-    background: active ? 'var(--hch-green-50)' : '#fff',
-    border: active ? '2px solid var(--hch-green-800)' : 'var(--border)',
+    background: active ? '#111' : '#fff',
+    border: active ? '2px solid #111' : '2px solid #ccc',
     borderRadius: 'var(--radius-lg)',
-    padding: '18px 14px',
+    padding: '20px 16px',
     textAlign: 'left',
     cursor: 'pointer',
+    color: active ? '#fff' : '#111',
   }
 }
 
@@ -720,6 +868,56 @@ function CheckDot() {
       <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
         <path d="M1 3L3 5L7 1" stroke="#0F6E56" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
+    </div>
+  )
+}
+
+function IconRow() {
+  return (
+    <div style={{ display: 'flex', gap: 14, marginTop: 'auto', paddingTop: 8, borderTop: '0.5px solid rgba(0,0,0,0.08)' }}>
+      {DIAGNOSTIC_ICONS.map(d => (
+        <div key={d.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, fontSize: 9, color: '#666' }}>
+          <span style={{ fontSize: 16 }}>{d.icon}</span>
+          {d.label}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function FlipTile({ pool, initialIndex, onActivityChange }) {
+  const [index, setIndex] = useState(initialIndex % pool.length)
+  const [flipping, setFlipping] = useState(false)
+
+  useEffect(() => {
+    onActivityChange(pool[index])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index])
+
+  function handleClick() {
+    if (flipping) return
+    setFlipping(true)
+    setTimeout(() => {
+      setIndex(i => (i + 1) % pool.length)
+      setFlipping(false)
+    }, 400)
+  }
+
+  const current = pool[index]
+  const next = pool[(index + 1) % pool.length]
+
+  return (
+    <div className="flip-outer" style={{ height: 96 }} onClick={handleClick}>
+      <div className={`flip-inner ${flipping ? 'flipped' : ''}`}>
+        <div className="flip-face" style={{ border: 'var(--border)', borderRadius: 'var(--radius-md)', padding: '10px', background: '#fff', cursor: 'pointer', alignItems: 'center', textAlign: 'center' }}>
+          <div style={{ fontSize: 18, marginBottom: 4 }}>{current.emoji}</div>
+          <div style={{ fontSize: 11, fontWeight: 500, lineHeight: 1.3 }}>{current.title}</div>
+        </div>
+        <div className="flip-face flip-face-back" style={{ border: 'var(--border)', borderRadius: 'var(--radius-md)', padding: '10px', background: '#fff', alignItems: 'center', textAlign: 'center' }}>
+          <div style={{ fontSize: 18, marginBottom: 4 }}>{next.emoji}</div>
+          <div style={{ fontSize: 11, fontWeight: 500, lineHeight: 1.3 }}>{next.title}</div>
+        </div>
+      </div>
     </div>
   )
 }
@@ -766,6 +964,10 @@ function groupByCategory(tests) {
 
 function tierAccent(tier) {
   return tier === 'advanced' ? '#534AB7' : 'var(--hch-green-800)'
+}
+
+function packageFallbackColor(tier) {
+  return tier === 'advanced' ? 'var(--hch-amber-50)' : 'var(--hch-green-50)'
 }
 
 function capitalize(str) {

@@ -1,8 +1,7 @@
 // Data for the 10-step /book flow. Japan is the only live destination —
 // other countries are shown greyed out for realism. Clinics and packages
 // are fetched live from Supabase (see src/lib/supabase.js) — only the
-// generic/static parts of the flow (countries, prep tips, leisure content)
-// stay hardcoded here.
+// generic/static parts of the flow stay hardcoded here.
 
 export const COUNTRIES = [
   { id: 'japan', name: 'Japan', flag: '🗾', tagline: 'World-leading diagnostics · Tokyo', active: true },
@@ -23,53 +22,111 @@ export const PREP_INSTRUCTIONS = [
   'Arrive 15 minutes early to complete check-in at the International Centre.',
 ]
 
+// The 6 fixed interest categories from the CEO spec.
 export const INTEREST_CATEGORIES = [
-  { id: 'culture', label: 'Culture & Temples', emoji: '⛩️' },
-  { id: 'food', label: 'Food & Dining', emoji: '🍜' },
-  { id: 'nature', label: 'Nature & Parks', emoji: '🌳' },
-  { id: 'shopping', label: 'Shopping', emoji: '🛍️' },
-  { id: 'nightlife', label: 'Nightlife & Bars', emoji: '🌃' },
-  { id: 'wellness', label: 'Wellness & Onsen', emoji: '♨️' },
-  { id: 'family', label: 'Family-friendly', emoji: '👨‍👩‍👧' },
-  { id: 'art', label: 'Art & Museums', emoji: '🎨' },
-  { id: 'daytrips', label: 'Day trips', emoji: '🚄' },
+  { id: 'art-culture', label: 'Art & Culture', emoji: '🎨' },
+  { id: 'food-dining', label: 'Food & Dining', emoji: '🍜' },
+  { id: 'historic-sites', label: 'Historic Sites', emoji: '⛩️' },
+  { id: 'nature-hiking', label: 'Nature & Hiking', emoji: '🥾' },
+  { id: 'sports-watching', label: 'Sports Watching', emoji: '🏟️' },
+  { id: 'social-connection', label: 'Social Connection', emoji: '🤝' },
 ]
 
-export const ACTIVITY_POOL = {
-  culture: ['Senso-ji Temple, Asakusa', 'Meiji Shrine', 'Imperial Palace East Gardens'],
-  food: ['Tsukiji Outer Market food tour', 'Omoide Yokocho yakitori alley', 'Shinjuku ramen crawl'],
-  nature: ['Shinjuku Gyoen National Garden', 'Mount Takao day hike', 'Hamarikyu Gardens'],
-  shopping: ['Ginza flagship stores', 'Shibuya streetwear', 'Nakamise-dori souvenirs'],
-  nightlife: ['Golden Gai bar hopping', 'Shibuya Sky sunset & bar', 'Roppongi izakaya night'],
-  wellness: ['Hakone onsen day trip', 'Traditional sento bathhouse', 'Spa LaQua Tokyo Dome'],
-  family: ['teamLab Planets, Toyosu', 'Ueno Zoo', 'Tokyo Disneyland'],
-  art: ['Mori Art Museum', 'teamLab Borderless', 'Tokyo National Museum'],
-  daytrips: ['Kamakura day trip', 'Nikko day trip', 'Kawagoe "Little Edo"'],
+// Step 7's centre tile — hardcoded, locked, cannot be moved or deleted.
+export const SCREENING_TILE = {
+  time: '09:00',
+  title: 'Morning Medical Screening',
+  subtitle: 'St. Luke\'s International Hospital',
 }
 
-export const COMPLIANCE_ITEMS = [
-  { id: 'fasting', label: 'I will arrive fasting for at least 8 hours before my appointment (water only).' },
-  { id: 'consent', label: 'I consent to sharing my health information with the partner hospital for scheduling and screening purposes.' },
-  { id: 'accuracy', label: 'I confirm that all information provided is accurate to the best of my knowledge.' },
+// Fixed pool of Tokyo experiences for Step 7 — every interest combination
+// in Step 6 leads to this same pool. 8 tiles are shown at once (the 9th
+// grid cell is the locked centre tile); clicking a tile cycles it through
+// this array, looping back to the start once every option has been shown.
+export const TOKYO_ACTIVITIES = [
+  { emoji: '⛩️', title: 'Senso-ji Temple, Asakusa' },
+  { emoji: '🎨', title: 'Mori Art Museum' },
+  { emoji: '🍜', title: 'Tsukiji Outer Market food tour' },
+  { emoji: '🥾', title: 'Mount Takao day hike' },
+  { emoji: '🏟️', title: 'Sumo tournament at Ryogoku Kokugikan' },
+  { emoji: '🤝', title: 'Izakaya crawl with a local guide' },
+  { emoji: '🌳', title: 'Shinjuku Gyoen National Garden' },
+  { emoji: '🛍️', title: 'Ginza flagship stores' },
+  { emoji: '🌃', title: 'Shibuya Sky sunset & bar' },
+  { emoji: '♨️', title: 'Hakone onsen day trip' },
 ]
 
-// Fills a 3x3 (9-cell) itinerary preview by cycling through the activity
-// pools of the selected interests, round-robin, until 9 cells are filled.
-export const buildItineraryPreview = (interestIds) => {
-  if (interestIds.length === 0) return []
-  const cells = []
-  let round = 0
-  while (cells.length < 9) {
-    let addedThisRound = false
-    for (const id of interestIds) {
-      const pool = ACTIVITY_POOL[id] || []
-      if (pool.length === 0) continue
-      cells.push({ interestId: id, activity: pool[round % pool.length] })
-      addedThisRound = true
-      if (cells.length >= 9) break
-    }
-    if (!addedThisRound) break
-    round += 1
+// Preferred travel window options for Step 8.
+export const TRAVEL_WINDOWS = [
+  'October 2026',
+  'November 2026',
+  'December 2026',
+  'January 2027',
+  'February 2027',
+  'March 2027',
+]
+
+// The 3 medical intake Yes/No toggles for Step 8.
+export const MEDICAL_QUESTIONS = [
+  { id: 'cardiovascular', label: 'Do you have any existing cardiovascular conditions?' },
+  { id: 'implants', label: 'Do you have any metal implants, clips, or pacemakers?' },
+  { id: 'bloodThinners', label: 'Are you currently taking prescribed blood-thinning medications?' },
+]
+
+export const LEAD_CAPTURE_LEGAL_COPY =
+  "Booking Request Initiated! To safely secure your slot at our partner clinic in compliance with global medical data regulations, a dedicated Health Check Holidays concierge will contact you within 48 hours to unlock your fully encrypted medical upload portal, finalize your dates, and lock in your custom itinerary."
+
+export const stripeLegalCopy = (clinicName) =>
+  `Secure checkout powered by Stripe. Payments are encrypted and routed directly to ${clinicName || 'the partner clinic'}'s international healthcare account. Health Check Holidays does not hold, store, or process client medical funds.`
+
+// Builds the Day 1 / Day 2 / Day 3+ itinerary for Step 10, blending the
+// user's Step 7 lifestyle tile selections into the travel grid around the
+// locked Day 2 medical screening slot.
+export const buildDynamicItinerary = (finalActivities) => {
+  const day1 = {
+    day: 1,
+    label: 'Arrival',
+    date: 'Day 1',
+    isHealthDay: false,
+    preDayTip: null,
+    events: [
+      { time: 'Arrival', type: 'travel', title: 'Airport Arrival', description: 'Land at Narita or Haneda Airport. Clear immigration and collect luggage.' },
+      { time: 'Afternoon', type: 'travel', title: 'Private Transfer', description: 'A private driver takes you directly to your hotel — no trains or transfers to navigate on arrival day.' },
+      { time: 'Evening', type: 'explore', title: 'Evening Relaxation', description: 'Settle in and rest. Light dinner near your hotel recommended before tomorrow.' },
+    ],
   }
-  return cells.slice(0, 9)
+
+  const day2 = {
+    day: 2,
+    label: 'Health check day',
+    date: 'Day 2',
+    isHealthDay: true,
+    preDayTip: { label: 'Before your screening tomorrow', text: 'Fast for 8 hours before your appointment — water only. Arrive 15 minutes early.' },
+    events: [
+      { time: SCREENING_TILE.time, type: 'health', title: SCREENING_TILE.title, description: `${SCREENING_TILE.subtitle} — International Centre. Confirmed slot, locked from your itinerary preview.`, tags: ['Confirmed'] },
+      { time: 'Afternoon', type: 'explore', title: 'Afternoon Art Gallery', description: 'A relaxed gallery visit to unwind after your screening — Mori Art Museum or teamLab, depending on opening hours.' },
+    ],
+  }
+
+  // Spread the remaining selected lifestyle tiles across Day 3+ (3 per day).
+  const laterDays = []
+  for (let i = 0; i < finalActivities.length; i += 3) {
+    const chunk = finalActivities.slice(i, i + 3)
+    const dayNum = 3 + Math.floor(i / 3)
+    laterDays.push({
+      day: dayNum,
+      label: 'Tokyo lifestyle day',
+      date: `Day ${dayNum}`,
+      isHealthDay: false,
+      preDayTip: null,
+      events: chunk.map((activity, idx) => ({
+        time: ['Morning', 'Afternoon', 'Evening'][idx] || 'Later',
+        type: idx === 1 ? 'food' : 'explore',
+        title: activity.title,
+        description: `Part of your personalised itinerary, selected during booking.`,
+      })),
+    })
+  }
+
+  return [day1, day2, ...laterDays]
 }

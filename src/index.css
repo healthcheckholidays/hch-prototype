@@ -531,6 +531,85 @@ h4 { font-size: 15px; font-weight: 500; }
   to { transform: rotate(360deg); }
 }
 
+/* ─── Booking flow: accordion step transitions ───────────────── */
+.step-collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--hch-green-50);
+  border: 0.5px solid var(--hch-green-300);
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #085041;
+}
+.step-collapsed:hover { background: #d7f0e6; }
+.step-collapsed .edit-hint { font-size: 11px; color: var(--hch-green-600); text-decoration: underline; }
+
+@keyframes step-expand-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.step-expand { animation: step-expand-in 0.28s ease-out; }
+
+/* ─── Booking flow: inactive tile treatment ──────────────────── */
+.tile-locked {
+  opacity: 0.4;
+  filter: grayscale(1);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.tile-active-hover { transition: border-color 0.15s, transform 0.15s; }
+.tile-active-hover:hover { border-color: var(--hch-green-800); transform: translateY(-1px); }
+
+/* ─── Booking flow: flip tile ────────────────────────────────── */
+.flip-outer { perspective: 800px; }
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s;
+  transform-style: preserve-3d;
+}
+.flip-inner.flipped { transform: rotateY(180deg); }
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.flip-face-back { transform: rotateY(180deg); }
+
+/* ─── Booking flow: mobile persistent sidebar drawer ─────────── */
+@media (max-width: 720px) {
+  .booking-two-col { grid-template-columns: 1fr !important; }
+  .booking-side-col {
+    position: fixed !important;
+    left: 0; right: 0; bottom: 0;
+    z-index: 150;
+    padding: 0 !important;
+    border-right: none;
+  }
+  .booking-side-col .booking-box {
+    position: static;
+    top: auto;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: 0 -6px 24px rgba(0,0,0,0.15);
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .booking-main-col { padding-bottom: 88px; }
+  .drawer-handle { display: flex !important; }
+  .drawer-body { display: none; }
+  .drawer-body.open { display: block; padding-top: 4px; }
+}
+.drawer-handle { display: none; }
+
 /* ─── Print styles ───────────────────────────────────────────── */
 @media print {
   .top-bar,

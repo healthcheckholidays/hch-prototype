@@ -355,7 +355,7 @@ export default function HomePage() {
           {featured.map(pkg => <PackageCard key={pkg.id} pkg={pkg} />)}
         </div>
         <button className="btn btn-primary" style={{ marginTop: 20 }} onClick={() => navigate('/book')}>
-          Browse all packages
+          Find my package
         </button>
       </div>
 

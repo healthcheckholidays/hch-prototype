@@ -212,8 +212,8 @@ export default function DestinationsPage() {
                 key={d.id}
                 onClick={() => setSelected(d)}
                 style={{
-                  background: selected.id === d.id ? d.bgColor : '#f9f9f7',
-                  border: selected.id === d.id ? '2px solid var(--hch-green-800)' : 'var(--border)',
+                  background: selected.id === d.id ? d.bgColor : 'var(--hch-sky)',
+                  border: selected.id === d.id ? '2px solid var(--hch-gold)' : 'var(--border)',
                   borderRadius: 'var(--radius-md)',
                   padding: '10px 6px',
                   textAlign: 'center',
@@ -283,7 +283,7 @@ export default function DestinationsPage() {
                         {capitalize(pkg.tier)} health check
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--hch-green-800)' }}>${pkg.price}<span style={{ fontSize: 10, color: '#888', fontWeight: 400 }}>/person</span></div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--hch-gold-dark)' }}>${pkg.price}<span style={{ fontSize: 10, color: '#888', fontWeight: 400 }}>/person</span></div>
                         <div style={{ fontSize: 11, color: '#888' }}>★ {pkg.rating}</div>
                       </div>
                     </div>
@@ -305,7 +305,7 @@ export default function DestinationsPage() {
           <div style={{ marginBottom: 16 }}>
             <div className="section-label" style={{ marginBottom: 8 }}>Cost comparison</div>
             <div style={{ border: 'var(--border)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
-              <div style={{ background: '#f9f9f7', padding: '8px 10px', borderBottom: 'var(--border)', fontSize: 11, color: '#555' }}>
+              <div style={{ background: 'var(--hch-sky)', padding: '8px 10px', borderBottom: 'var(--border)', fontSize: 11, color: '#555' }}>
                 {selected.usComparison.test}
               </div>
               <div style={{ padding: '10px' }}>
@@ -315,7 +315,7 @@ export default function DestinationsPage() {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ fontSize: 11, color: '#888' }}>In {selected.name}</div>
-                  <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--hch-green-800)' }}>{selected.usComparison.here}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--hch-gold-dark)' }}>{selected.usComparison.here}</div>
                 </div>
               </div>
             </div>

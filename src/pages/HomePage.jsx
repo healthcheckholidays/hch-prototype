@@ -150,7 +150,7 @@ export default function HomePage() {
       <TopBar />
 
       {/* Cinematic video hero */}
-      <div style={{ position: 'relative', height: 480, overflow: 'hidden', background: '#0b2e24' }}>
+      <div style={{ position: 'relative', height: 480, overflow: 'hidden', background: 'var(--hch-green-900)' }}>
 
         {/* Background video */}
         <video
@@ -182,8 +182,8 @@ export default function HomePage() {
         }}>
           {/* Eyebrow */}
           <div style={{
-            fontSize: 10, fontWeight: 500, letterSpacing: '0.1em',
-            textTransform: 'uppercase', color: '#5DCAA5',
+            fontSize: 10, fontWeight: 600, letterSpacing: '0.1em',
+            textTransform: 'uppercase', color: 'var(--hch-gold)',
             marginBottom: 8,
           }}>
             Health screening + holiday, combined
@@ -210,7 +210,7 @@ export default function HomePage() {
           {/* Search bar */}
           <div style={{
             display: 'grid', gridTemplateColumns: '1fr 1fr auto',
-            background: '#fff', borderRadius: 10,
+            background: 'var(--hch-sand)', borderRadius: 10,
             overflow: 'hidden', maxWidth: 480,
             boxShadow: '0 4px 28px rgba(0,0,0,0.35)',
           }}>
@@ -284,7 +284,7 @@ export default function HomePage() {
       </div>
 
       {/* How it works — summary */}
-      <div style={{ padding: '32px 24px', borderBottom: 'var(--border)', background: '#f9f9f7' }}>
+      <div style={{ padding: '32px 24px', borderBottom: 'var(--border)', background: 'var(--hch-sky)' }}>
         <div className="section-label">How it works</div>
         <h2 style={{ marginBottom: 20 }}>Five steps, one holiday</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -328,17 +328,17 @@ export default function HomePage() {
               key={d.name}
               onClick={() => navigate(`/destinations`)}
               style={{
-                background: '#f5f5f3', border: 'var(--border)', borderRadius: 'var(--radius-lg)',
+                background: 'var(--hch-sand)', border: 'var(--border)', borderRadius: 'var(--radius-lg)',
                 padding: '14px 10px', textAlign: 'center', cursor: 'pointer',
                 transition: 'border-color 0.15s',
               }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--hch-green-800)'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(0,0,0,0.12)'}
+              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--hch-gold)'}
+              onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(20,82,71,0.15)'}
             >
               <div style={{ fontSize: 28, marginBottom: 6 }}>{d.emoji}</div>
               <div style={{ fontSize: 13, fontWeight: 500 }}>{d.name}</div>
               <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>{d.city}</div>
-              <div style={{ fontSize: 11, color: 'var(--hch-green-600)', marginTop: 4 }}>Save {d.saving}</div>
+              <div style={{ fontSize: 11, color: 'var(--hch-gold-dark)', fontWeight: 600, marginTop: 4 }}>Save {d.saving}</div>
             </button>
           ))}
         </div>
@@ -360,7 +360,7 @@ export default function HomePage() {
       </div>
 
       {/* Pricing tiers */}
-      <div style={{ padding: '32px 24px', borderBottom: 'var(--border)', background: '#f9f9f7' }}>
+      <div style={{ padding: '32px 24px', borderBottom: 'var(--border)', background: 'var(--hch-sky)' }}>
         <div className="section-label">Pricing</div>
         <h2 style={{ marginBottom: 6 }}>Three tiers, one goal</h2>
         <p style={{ fontSize: 13, color: '#666', marginBottom: 20 }}>
@@ -375,18 +375,18 @@ export default function HomePage() {
               {tier.badge && (
                 <span style={{
                   position: 'absolute', top: 14, right: 14,
-                  background: tier.accent, color: '#fff',
-                  fontSize: 10, fontWeight: 500, padding: '2px 8px', borderRadius: 4,
+                  background: 'var(--hch-gold)', color: 'var(--hch-green-800)',
+                  fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 4,
                 }}>
                   {tier.badge}
                 </span>
               )}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 500, color: tier.accent }}>{tier.name}</div>
+                  <div style={{ fontSize: 15, fontWeight: 500, color: tier.accent, fontFamily: "'Playfair Display', serif" }}>{tier.name}</div>
                   <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>{tier.duration}</div>
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 500, color: tier.accent }}>{tier.price}</div>
+                <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--hch-gold-dark)' }}>{tier.price}</div>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {tier.items.map(item => (
@@ -439,7 +439,7 @@ function SearchBarField({ label, children, noBorder }) {
 
 function TrustRow({ icon, text }) {
   return (
-    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '10px 12px', border: 'var(--border)', borderRadius: 'var(--radius-md)', background: '#fff' }}>
+    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '10px 12px', border: 'var(--border)', borderRadius: 'var(--radius-md)', background: 'var(--hch-sand)' }}>
       <span style={{ fontSize: 18, flexShrink: 0 }}>{icon}</span>
       <span style={{ fontSize: 13, color: '#444', lineHeight: 1.6 }}>{text}</span>
     </div>

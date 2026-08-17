@@ -74,7 +74,7 @@ export default function SearchResultsPage() {
       {/* Search summary bar */}
       <div style={{ background: 'var(--hch-green-800)', padding: '10px 24px 14px' }}>
         {editingSearch ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 6, background: '#fff', borderRadius: 12, padding: 6 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 6, background: 'var(--hch-sand)', borderRadius: 12, padding: 6 }}>
             <SearchField label="Where">
               <select
                 value={dest}
@@ -139,12 +139,12 @@ export default function SearchResultsPage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 4,
-                background: 'var(--hch-green-50)',
-                border: '0.5px solid var(--hch-green-300)',
+                background: 'rgba(250,168,5,0.15)',
+                border: '0.5px solid var(--hch-gold)',
                 borderRadius: 20,
                 padding: '4px 10px',
                 fontSize: 12,
-                color: '#085041',
+                color: 'var(--hch-green-800)',
                 cursor: 'pointer',
               }}
             >
@@ -194,7 +194,7 @@ export default function SearchResultsPage() {
           {/* Price range */}
           <div style={{ marginBottom: 18 }}>
             <div className="section-label" style={{ marginBottom: 6 }}>Max price</div>
-            <div style={{ fontSize: 20, fontWeight: 500, color: 'var(--hch-green-800)', marginBottom: 6 }}>${priceMax}</div>
+            <div style={{ fontSize: 20, fontWeight: 600, color: 'var(--hch-gold-dark)', marginBottom: 6 }}>${priceMax}</div>
             <input
               type="range"
               min={100}
@@ -202,7 +202,7 @@ export default function SearchResultsPage() {
               step={50}
               value={priceMax}
               onChange={e => setPriceMax(Number(e.target.value))}
-              style={{ width: '100%', accentColor: 'var(--hch-green-800)' }}
+              style={{ width: '100%', accentColor: 'var(--hch-gold)' }}
             />
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: '#888', marginTop: 2 }}>
               <span>$100</span><span>$800</span>
@@ -218,7 +218,7 @@ export default function SearchResultsPage() {
                   type="checkbox"
                   checked={tierFilters.includes(tier)}
                   onChange={() => toggleTier(tier)}
-                  style={{ accentColor: 'var(--hch-green-800)', width: 14, height: 14 }}
+                  style={{ accentColor: 'var(--hch-gold)', width: 14, height: 14 }}
                 />
                 {tier}
               </label>
@@ -233,7 +233,7 @@ export default function SearchResultsPage() {
                 type="checkbox"
                 checked={jciOnly}
                 onChange={e => setJciOnly(e.target.checked)}
-                style={{ accentColor: 'var(--hch-green-800)', width: 14, height: 14 }}
+                style={{ accentColor: 'var(--hch-gold)', width: 14, height: 14 }}
               />
               JCI accredited only
             </label>
@@ -249,7 +249,7 @@ export default function SearchResultsPage() {
                   name="duration"
                   checked={durationFilter === d}
                   onChange={() => setDurationFilter(durationFilter === d ? '' : d)}
-                  style={{ accentColor: 'var(--hch-green-800)', width: 14, height: 14 }}
+                  style={{ accentColor: 'var(--hch-gold)', width: 14, height: 14 }}
                 />
                 {d}
               </label>

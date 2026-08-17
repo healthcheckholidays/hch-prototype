@@ -312,7 +312,7 @@ export default function BookingFlow() {
                       onClick={() => selectCountry(c)}
                       className={c.active ? 'tile-active-hover' : 'tile-locked'}
                       style={{
-                        background: '#f9f9f7',
+                        background: 'var(--hch-sand)',
                         border: 'var(--border)',
                         borderRadius: 'var(--radius-md)',
                         padding: '14px 8px',
@@ -369,7 +369,7 @@ export default function BookingFlow() {
                           <div style={{ flex: 1, display: 'flex', gap: 12 }}>
                             <div style={{
                               width: 72, height: 72, borderRadius: 'var(--radius-md)', flexShrink: 0, overflow: 'hidden',
-                              background: '#f5f5f3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
+                              background: 'var(--hch-sand)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
                             }}>
                               {clinic.image_url ? (
                                 <img
@@ -428,18 +428,18 @@ export default function BookingFlow() {
                           onClick={() => selectPackageAndAdvance(pkg)}
                           className={isActivePkg ? 'tile-active-hover' : 'tile-locked'}
                           style={{
-                            border: form.packageId === pkg.id ? '2px solid var(--hch-green-800)' : 'var(--border)',
+                            border: form.packageId === pkg.id ? '2px solid var(--hch-gold)' : 'var(--border)',
                             borderRadius: 'var(--radius-lg)',
                             overflow: 'hidden',
                             cursor: 'pointer',
                             position: 'relative',
-                            background: '#fff',
+                            background: 'var(--hch-sand)',
                             display: 'flex',
                             flexDirection: 'column',
                           }}
                         >
                           {(pkg.badge || pkg.tier === 'comprehensive') && (
-                            <span style={{ position: 'absolute', top: 8, right: 8, zIndex: 1, background: tierAccent(pkg.tier), color: '#fff', fontSize: 9, fontWeight: 500, padding: '2px 7px', borderRadius: 4 }}>
+                            <span style={{ position: 'absolute', top: 8, right: 8, zIndex: 1, background: 'var(--hch-gold)', color: 'var(--hch-green-800)', fontSize: 9, fontWeight: 600, padding: '2px 7px', borderRadius: 4 }}>
                               {pkg.badge || 'Most popular'}
                             </span>
                           )}
@@ -455,7 +455,7 @@ export default function BookingFlow() {
                           <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                             <div style={{ fontSize: 14, fontWeight: 500, color: tierAccent(pkg.tier) }}>{pkg.name}</div>
                             <div style={{ fontSize: 11, color: '#666', margin: '2px 0 6px' }}>{pkg.duration} · {capitalize(pkg.tier)}</div>
-                            <div style={{ fontSize: 16, fontWeight: 500, color: tierAccent(pkg.tier), marginBottom: 6 }}>
+                            <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--hch-gold-dark)', marginBottom: 6 }}>
                               ${pkg.price_usd}<span style={{ fontSize: 10, color: '#888', fontWeight: 400 }}>/person</span>
                             </div>
                             {pkg.description && <div style={{ fontSize: 11, color: '#444', lineHeight: 1.5, marginBottom: 8 }}>{pkg.description}</div>}
@@ -522,9 +522,9 @@ export default function BookingFlow() {
                       ))}
                     </div>
 
-                    <div style={{ background: '#f5f5f3', borderRadius: 10, padding: '10px 14px', fontSize: 12, color: '#555' }}>
+                    <div style={{ background: 'var(--hch-sand)', borderRadius: 10, padding: '10px 14px', fontSize: 12, color: '#555' }}>
                       <span style={{ fontWeight: 500, color: '#111' }}>Total for this package: </span>
-                      ${activePackage.price_usd} screening + ${COORD_FEE} coordination fee = ${activePackage.price_usd + COORD_FEE}
+                      ${activePackage.price_usd} screening + ${COORD_FEE} coordination fee = <span style={{ fontWeight: 600, color: 'var(--hch-gold-dark)' }}>${activePackage.price_usd + COORD_FEE}</span>
                     </div>
                   </>
                 )}
@@ -569,8 +569,8 @@ export default function BookingFlow() {
                         key={cat.id}
                         onClick={() => toggleInterest(cat.id)}
                         style={{
-                          background: isSel ? 'var(--hch-green-50)' : '#fff',
-                          border: isSel ? '2px solid var(--hch-green-800)' : 'var(--border)',
+                          background: isSel ? 'rgba(250,168,5,0.15)' : 'var(--hch-sand)',
+                          border: isSel ? '2px solid var(--hch-gold)' : 'var(--border)',
                           borderRadius: 'var(--radius-md)',
                           padding: '14px 8px',
                           textAlign: 'center',
@@ -578,7 +578,7 @@ export default function BookingFlow() {
                         }}
                       >
                         <div style={{ fontSize: 24, marginBottom: 4 }}>{cat.emoji}</div>
-                        <div style={{ fontSize: 12, fontWeight: isSel ? 500 : 400, color: isSel ? 'var(--hch-green-800)' : '#333' }}>{cat.label}</div>
+                        <div style={{ fontSize: 12, fontWeight: isSel ? 600 : 400, color: isSel ? 'var(--hch-green-800)' : '#333' }}>{cat.label}</div>
                       </button>
                     )
                   })}
@@ -668,10 +668,10 @@ export default function BookingFlow() {
                                 onClick={() => setMedicalAnswer(q.id, opt)}
                                 style={{
                                   padding: '6px 20px', borderRadius: 'var(--radius-md)', fontSize: 12, cursor: 'pointer',
-                                  border: active ? '2px solid var(--hch-green-800)' : 'var(--border)',
-                                  background: active ? 'var(--hch-green-50)' : '#fff',
+                                  border: active ? '2px solid var(--hch-gold)' : 'var(--border)',
+                                  background: active ? 'rgba(250,168,5,0.15)' : 'var(--hch-sand)',
                                   color: active ? 'var(--hch-green-800)' : '#444',
-                                  fontWeight: active ? 500 : 400,
+                                  fontWeight: active ? 600 : 400,
                                 }}
                               >
                                 {opt}
@@ -744,14 +744,14 @@ export default function BookingFlow() {
       {/* Stripe-style checkout modal */}
       {showCheckout && activePackage && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: 16 }}>
-          <div style={{ background: '#fff', borderRadius: 12, width: '100%', maxWidth: 380, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
+          <div style={{ background: 'var(--hch-sand)', borderRadius: 12, width: '100%', maxWidth: 380, overflow: 'hidden', boxShadow: '0 20px 60px rgba(0,0,0,0.3)' }}>
             <div style={{ padding: '18px 20px', borderBottom: 'var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontSize: 14, fontWeight: 500 }}>Health Check Holidays</div>
+              <div style={{ fontSize: 14, fontWeight: 500, fontFamily: "'Playfair Display', serif", color: 'var(--hch-green-800)' }}>Health Check Holidays</div>
               <button onClick={() => setShowCheckout(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: '#888' }}>×</button>
             </div>
             <div style={{ padding: 20 }}>
               <div style={{ fontSize: 12, color: '#888', marginBottom: 2 }}>Amount due</div>
-              <div style={{ fontSize: 28, fontWeight: 500, marginBottom: 10 }}>
+              <div style={{ fontSize: 28, fontWeight: 600, marginBottom: 10, color: 'var(--hch-gold-dark)' }}>
                 ${total.toFixed(2)} <span style={{ fontSize: 13, color: '#888', fontWeight: 400 }}>USD</span>
               </div>
 
@@ -843,7 +843,7 @@ function forkCardStyle(active, isPrimary) {
   if (isPrimary) {
     return {
       background: active ? 'var(--hch-green-700)' : 'var(--hch-green-800)',
-      border: active ? '2px solid #fff' : '2px solid var(--hch-green-800)',
+      border: active ? '2px solid var(--hch-gold)' : '2px solid var(--hch-green-800)',
       borderRadius: 'var(--radius-lg)',
       padding: '20px 16px',
       textAlign: 'left',
@@ -909,11 +909,11 @@ function FlipTile({ pool, initialIndex, onActivityChange }) {
   return (
     <div className="flip-outer" style={{ height: 96 }} onClick={handleClick}>
       <div className={`flip-inner ${flipping ? 'flipped' : ''}`}>
-        <div className="flip-face" style={{ border: 'var(--border)', borderRadius: 'var(--radius-md)', padding: '10px', background: '#fff', cursor: 'pointer', alignItems: 'center', textAlign: 'center' }}>
+        <div className="flip-face" style={{ border: 'var(--border)', borderRadius: 'var(--radius-md)', padding: '10px', background: 'var(--hch-sand)', cursor: 'pointer', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ fontSize: 18, marginBottom: 4 }}>{current.emoji}</div>
           <div style={{ fontSize: 11, fontWeight: 500, lineHeight: 1.3 }}>{current.title}</div>
         </div>
-        <div className="flip-face flip-face-back" style={{ border: 'var(--border)', borderRadius: 'var(--radius-md)', padding: '10px', background: '#fff', alignItems: 'center', textAlign: 'center' }}>
+        <div className="flip-face flip-face-back" style={{ border: 'var(--border)', borderRadius: 'var(--radius-md)', padding: '10px', background: 'var(--hch-sand)', alignItems: 'center', textAlign: 'center' }}>
           <div style={{ fontSize: 18, marginBottom: 4 }}>{next.emoji}</div>
           <div style={{ fontSize: 11, fontWeight: 500, lineHeight: 1.3 }}>{next.title}</div>
         </div>

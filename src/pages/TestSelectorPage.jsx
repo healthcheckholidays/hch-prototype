@@ -61,7 +61,7 @@ export default function TestSelectorPage() {
       </div>
 
       {/* Standard tests block */}
-      <div style={{ padding: '12px 24px 14px', background: '#f9f9f7', borderBottom: 'var(--border)' }}>
+      <div style={{ padding: '12px 24px 14px', background: 'var(--hch-sky)', borderBottom: 'var(--border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
           <div style={{
             width: 22, height: 22, borderRadius: '50%', background: 'var(--hch-green-800)',
@@ -97,8 +97,8 @@ export default function TestSelectorPage() {
                   {cat.label}
                   {catCount > 0 && (
                     <span style={{
-                      marginLeft: 4, background: activeCat === cat.id ? 'rgba(255,255,255,0.3)' : 'var(--hch-green-800)',
-                      color: '#fff', borderRadius: 10, padding: '0 5px', fontSize: 10,
+                      marginLeft: 4, background: activeCat === cat.id ? 'rgba(255,255,255,0.3)' : 'var(--hch-gold)',
+                      color: activeCat === cat.id ? '#fff' : 'var(--hch-green-800)', borderRadius: 10, padding: '0 5px', fontSize: 10, fontWeight: 600,
                     }}>{catCount}</span>
                   )}
                 </button>
@@ -115,11 +115,11 @@ export default function TestSelectorPage() {
                   key={test.id}
                   onClick={() => toggle(test.id)}
                   style={{
-                    border: isSel ? '1.5px solid var(--hch-green-800)' : 'var(--border)',
+                    border: isSel ? '1.5px solid var(--hch-gold)' : 'var(--border)',
                     borderRadius: 'var(--radius-md)',
                     padding: '11px 13px',
                     cursor: 'pointer',
-                    background: isSel ? 'var(--hch-green-50)' : '#fff',
+                    background: isSel ? 'rgba(250,168,5,0.15)' : 'var(--hch-sand)',
                     transition: 'border-color 0.12s, background 0.12s',
                     display: 'flex',
                     gap: 11,
@@ -130,12 +130,12 @@ export default function TestSelectorPage() {
                   <div style={{
                     width: 17, height: 17, borderRadius: 4, flexShrink: 0, marginTop: 2,
                     border: isSel ? 'none' : '1.5px solid rgba(0,0,0,0.22)',
-                    background: isSel ? 'var(--hch-green-800)' : '#fff',
+                    background: isSel ? 'var(--hch-gold)' : 'var(--hch-sand)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     {isSel && (
                       <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
-                        <path d="M1 3.5L3.2 5.7L8 1" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M1 3.5L3.2 5.7L8 1" stroke="#145247" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     )}
                   </div>
@@ -152,7 +152,7 @@ export default function TestSelectorPage() {
                     <div style={{ fontSize: 11, color: 'var(--hch-green-600)', fontStyle: 'italic', marginBottom: 6 }}>→ {test.why}</div>
                     <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
                       <span style={{ fontSize: 11, color: '#888' }}>⏱ {test.duration}</span>
-                      <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--hch-green-800)' }}>+${test.price}</span>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--hch-gold-dark)' }}>+${test.price}</span>
                       <span style={{ fontSize: 11, color: '#aaa' }}>{test.hosps.length}/13 hospitals</span>
                     </div>
                   </div>
@@ -171,10 +171,10 @@ export default function TestSelectorPage() {
           {selected.size > 0 && (
             <div style={{
               marginTop: 16, padding: '10px 12px',
-              background: 'var(--hch-green-50)', borderRadius: 'var(--radius-md)',
-              border: '0.5px solid var(--hch-green-300)',
+              background: 'rgba(250,168,5,0.15)', borderRadius: 'var(--radius-md)',
+              border: '0.5px solid var(--hch-gold)',
             }}>
-              <div style={{ fontSize: 12, fontWeight: 500, color: '#085041', marginBottom: 6 }}>
+              <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--hch-green-800)', marginBottom: 6 }}>
                 {selected.size} add-on{selected.size !== 1 ? 's' : ''} selected
               </div>
               <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
@@ -182,8 +182,8 @@ export default function TestSelectorPage() {
                   const t = getAddon(id)
                   return t ? (
                     <span key={id} style={{
-                      background: '#fff', border: '0.5px solid var(--hch-green-300)',
-                      borderRadius: 20, padding: '2px 8px', fontSize: 11, color: '#085041',
+                      background: 'var(--hch-sand)', border: '0.5px solid var(--hch-gold)',
+                      borderRadius: 20, padding: '2px 8px', fontSize: 11, color: 'var(--hch-green-800)',
                       display: 'inline-flex', alignItems: 'center', gap: 4,
                     }}>
                       {t.name}

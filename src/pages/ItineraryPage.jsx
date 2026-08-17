@@ -4,7 +4,7 @@ import { Timeline } from '../components/Timeline'
 import { getItinerary } from '../data/itineraries'
 
 const LEGEND = [
-  { type: 'health', label: 'Health check', color: '#0d5c4a' },
+  { type: 'health', label: 'Health check', color: '#145247' },
   { type: 'explore', label: 'Sightseeing', color: '#378ADD' },
   { type: 'food', label: 'Food & dining', color: '#BA7517' },
   { type: 'travel', label: 'Travel', color: '#888780' },
@@ -36,7 +36,7 @@ export default function ItineraryPage() {
       </div>
 
       {/* Itinerary header — prints in green */}
-      <div className="itin-header" style={{ background: '#0d5c4a', padding: '20px 24px' }}>
+      <div className="itin-header" style={{ background: 'var(--hch-green-800)', padding: '20px 24px' }}>
         <div style={{ color: '#5DCAA5', fontSize: 13, fontWeight: 500, marginBottom: 12 }}>
           Health Check Holidays
         </div>
@@ -83,7 +83,7 @@ export default function ItineraryPage() {
             {/* Day label row */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
               <span style={{
-                background: day.isHealthDay ? '#085041' : '#0d5c4a',
+                background: day.isHealthDay ? 'var(--hch-green-900)' : 'var(--hch-green-800)',
                 color: '#fff',
                 fontSize: 11,
                 fontWeight: 500,
@@ -131,7 +131,7 @@ export default function ItineraryPage() {
       </div>
 
       {/* Print / back bar */}
-      <div className="print-bar-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 24px', borderTop: '0.5px solid rgba(0,0,0,0.1)', background: '#f9f9f7' }}>
+      <div className="print-bar-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 24px', borderTop: '0.5px solid rgba(0,0,0,0.1)', background: 'var(--hch-sky)' }}>
         <div style={{ fontSize: 11, color: '#888' }}>
           Ref: {bookingRef} · healthcheckholidays.com
         </div>

@@ -88,7 +88,7 @@ export default function PackageDetailPage() {
                 <div style={{ fontSize: 11, color: '#888', marginBottom: 6 }}>{h.location} · {h.accreditation}</div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ fontSize: 11, color: '#888' }}>★ {h.rating}</div>
-                  <div style={{ fontSize: 13, fontWeight: 500, color: '#0d5c4a' }}>From ${h.price}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--hch-gold-dark)' }}>From ${h.price}</div>
                 </div>
               </div>
             </div>

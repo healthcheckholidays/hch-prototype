@@ -31,7 +31,7 @@ export function PersistentSidebar({ country, clinicName, packageName, price, pri
         <div className="bb-breakdown">
           <div className="bb-total">
             <span>Estimated total</span>
-            <span style={{ color: 'var(--hch-green-800)' }}>{price ? `$${price}` : '—'}</span>
+            <span style={{ color: 'var(--hch-gold-dark)', fontWeight: 600 }}>{price ? `$${price}` : '—'}</span>
           </div>
           {priceNote && <div style={{ fontSize: 10, color: '#888', marginTop: 4 }}>{priceNote}</div>}
         </div>

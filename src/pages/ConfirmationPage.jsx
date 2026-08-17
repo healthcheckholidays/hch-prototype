@@ -36,7 +36,7 @@ export default function ConfirmationPage() {
             border: '2px solid var(--hch-green-300)',
           }}>
             <svg width="28" height="22" viewBox="0 0 28 22" fill="none">
-              <path d="M2 11L10 19L26 3" stroke="#0d5c4a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 11L10 19L26 3" stroke="#145247" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
           <h1 style={{ fontSize: 24, fontWeight: 500, marginBottom: 6 }}>Screening slot reserved</h1>
@@ -47,7 +47,7 @@ export default function ConfirmationPage() {
 
         {/* Booking reference */}
         <div style={{
-          background: '#f5f5f3',
+          background: 'var(--hch-sand)',
           border: 'var(--border)',
           borderRadius: 'var(--radius-md)',
           padding: '12px 16px',

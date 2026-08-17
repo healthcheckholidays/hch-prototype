@@ -26,6 +26,7 @@ export function PackageCard({ pkg }) {
           className="wishlist-btn"
           onClick={(e) => { e.stopPropagation(); setWishlisted(!wishlisted) }}
           aria-label={wishlisted ? 'Remove from wishlist' : 'Save to wishlist'}
+          style={{ color: wishlisted ? 'var(--hch-gold-dark)' : '#333' }}
         >
           {wishlisted ? '♥' : '♡'}
         </button>

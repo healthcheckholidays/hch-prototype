@@ -218,7 +218,7 @@ export default function ProfilePage() {
                   type="checkbox"
                   checked={form.interests.includes(interest)}
                   onChange={() => toggleInterest(interest)}
-                  style={{ accentColor: 'var(--hch-green-800)', width: 15, height: 15 }}
+                  style={{ accentColor: 'var(--hch-gold)', width: 15, height: 15 }}
                 />
                 {interest}
               </label>

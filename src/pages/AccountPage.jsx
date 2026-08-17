@@ -21,7 +21,7 @@ export default function AccountPage() {
       <TopBar />
 
       {/* Account header */}
-      <div style={{ background: '#0d5c4a' }}>
+      <div style={{ background: 'var(--hch-green-800)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '20px 24px 16px' }}>
           <div style={{ width: 48, height: 48, background: '#1D9E75', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 500, color: '#fff', flexShrink: 0 }}>
             {user.initials}
@@ -91,12 +91,12 @@ export default function AccountPage() {
                 <div key={id} className="card" style={{ cursor: 'pointer' }} onClick={() => navigate(`/shop/${pkg.id}`)}>
                   <div style={{ height: 64, background: pkg.bgColor, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, position: 'relative' }}>
                     {pkg.emoji}
-                    <span style={{ position: 'absolute', top: 6, right: 8, color: '#D85A30', fontSize: 14 }}>♥</span>
+                    <span style={{ position: 'absolute', top: 6, right: 8, color: 'var(--hch-gold-dark)', fontSize: 14 }}>♥</span>
                   </div>
                   <div className="card-body">
                     <div style={{ fontSize: 10, color: '#888' }}>{pkg.destination}</div>
                     <div style={{ fontSize: 13, fontWeight: 500, margin: '2px 0 4px' }}>{pkg.destination} {capitalize(pkg.tier)} Check</div>
-                    <div style={{ fontSize: 12, color: '#0d5c4a', fontWeight: 500 }}>from ${pkg.price}/person</div>
+                    <div style={{ fontSize: 12, color: 'var(--hch-gold-dark)', fontWeight: 600 }}>from ${pkg.price}/person</div>
                   </div>
                 </div>
               )
@@ -154,7 +154,7 @@ export default function AccountPage() {
 function StatCell({ num, label }) {
   return (
     <div style={{ padding: '14px 16px', borderRight: '0.5px solid rgba(0,0,0,0.1)' }}>
-      <div style={{ fontSize: 22, fontWeight: 500, color: '#0d5c4a' }}>{num}</div>
+      <div style={{ fontSize: 22, fontWeight: 600, color: 'var(--hch-gold-dark)' }}>{num}</div>
       <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>{label}</div>
     </div>
   )
@@ -206,7 +206,7 @@ function ProfileField({ label, value }) {
   return (
     <div>
       <div style={{ fontSize: 12, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 14, padding: '8px 10px', border: '0.5px solid rgba(0,0,0,0.1)', borderRadius: 8, background: '#f9f9f7' }}>{value}</div>
+      <div style={{ fontSize: 14, padding: '8px 10px', border: '0.5px solid rgba(0,0,0,0.1)', borderRadius: 8, background: 'var(--hch-sand)' }}>{value}</div>
     </div>
   )
 }

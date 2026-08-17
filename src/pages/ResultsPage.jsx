@@ -72,7 +72,7 @@ export default function ResultsPage() {
       </div>
 
       {/* Trip summary bar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', borderBottom: 'var(--border)', background: '#f9f9f7' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', borderBottom: 'var(--border)', background: 'var(--hch-sky)' }}>
         <SummaryCell label="Destination" value="Bangkok, Thailand" />
         <SummaryCell label="Date" value="March 2025" />
         <SummaryCell label="Hospital" value="Bumrungrad International" />
@@ -93,7 +93,7 @@ export default function ResultsPage() {
               <div className="section-label" style={{ marginBottom: 8 }}>{section.section}</div>
               <div style={{ border: 'var(--border)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
                 {/* Header row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto 2fr', gap: 0, background: '#f9f9f7', borderBottom: 'var(--border)', padding: '6px 12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto 2fr', gap: 0, background: 'var(--hch-sky)', borderBottom: 'var(--border)', padding: '6px 12px' }}>
                   {['Test', 'Your result', 'Reference', '', 'What it means'].map((h, i) => (
                     <div key={i} style={{ fontSize: 10, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888' }}>{h}</div>
                   ))}
@@ -171,7 +171,7 @@ export default function ResultsPage() {
           </div>
 
           {/* Legend */}
-          <div style={{ background: '#f9f9f7', borderRadius: 'var(--radius-md)', padding: '10px 12px', fontSize: 12 }}>
+          <div style={{ background: 'var(--hch-sky)', borderRadius: 'var(--radius-md)', padding: '10px 12px', fontSize: 12 }}>
             <div style={{ fontWeight: 500, marginBottom: 8, fontSize: 13 }}>Result key</div>
             {Object.entries(STATUS_CONFIG).map(([key, cfg]) => (
               <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>

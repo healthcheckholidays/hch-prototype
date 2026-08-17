@@ -71,8 +71,8 @@ export default function ShopPage() {
       <TopBar />
 
       {/* Search bar */}
-      <div style={{ background: '#0d5c4a', padding: '0 24px 16px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 6, background: '#fff', borderRadius: 12, padding: 6 }}>
+      <div style={{ background: 'var(--hch-green-800)', padding: '0 24px 16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 6, background: 'var(--hch-sand)', borderRadius: 12, padding: 6 }}>
           <SearchField label="Where">
             <select
               value={destFilter}
@@ -135,7 +135,7 @@ export default function ShopPage() {
           <button
             className="chip active"
             onClick={clearTestFilter}
-            style={{ background: 'var(--hch-green-800)', display: 'inline-flex', alignItems: 'center', gap: 5 }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}
           >
             🔬 {activeHosps.length} hospital{activeHosps.length !== 1 ? 's' : ''} matched ×
           </button>

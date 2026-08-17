@@ -143,7 +143,7 @@ export default function HowItWorksPage() {
       </div>
 
       {/* Sample check-up day timeline */}
-      <div style={{ padding: '28px 24px', borderBottom: 'var(--border)', background: '#f9f9f7' }}>
+      <div style={{ padding: '28px 24px', borderBottom: 'var(--border)', background: 'var(--hch-sky)' }}>
         <div className="section-label" style={{ marginBottom: 4 }}>Sample check-up day</div>
         <h2 style={{ marginBottom: 4 }}>What a typical morning looks like</h2>
         <p style={{ fontSize: 13, color: '#666', marginBottom: 20 }}>
@@ -180,7 +180,7 @@ export default function HowItWorksPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
           {RESULT_TYPES.map(r => (
-            <div key={r.status} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '12px 14px', border: 'var(--border)', borderRadius: 'var(--radius-md)', background: '#fff' }}>
+            <div key={r.status} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '12px 14px', border: 'var(--border)', borderRadius: 'var(--radius-md)', background: 'var(--hch-sand)' }}>
               <div style={{ width: 12, height: 12, borderRadius: '50%', background: r.dot, flexShrink: 0, marginTop: 3 }} />
               <div>
                 <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 3 }}>{r.label}</div>
@@ -227,7 +227,7 @@ export default function HowItWorksPage() {
       </div>
 
       {/* CTA */}
-      <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--hch-green-50)' }}>
+      <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--hch-sand)' }}>
         <h2 style={{ marginBottom: 8 }}>Ready to get started?</h2>
         <p style={{ fontSize: 13, color: '#555', marginBottom: 20, maxWidth: 400, margin: '0 auto 20px' }}>
           Browse packages by destination or tier and reserve your screening slot in minutes.

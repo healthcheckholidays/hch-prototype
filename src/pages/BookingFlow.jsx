@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { TopBar, Footer, Breadcrumb } from '../components/Nav'
 import { PersistentSidebar } from '../components/PersistentSidebar'
 import { COORD_FEE } from '../data/packages'
@@ -26,6 +26,7 @@ const DIAGNOSTIC_ICONS = [
 
 export default function BookingFlow() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [step, setStep] = useState(0)
   const [showCheckout, setShowCheckout] = useState(false)
   const [card, setCard] = useState({ number: '', expiry: '', cvc: '', name: '' })
@@ -60,6 +61,19 @@ export default function BookingFlow() {
   const [detailLoading, setDetailLoading] = useState(false)
   const [detailError, setDetailError] = useState(null)
   const [detailRetry, setDetailRetry] = useState(0)
+
+  // Arriving with a destination already chosen elsewhere (home search,
+  // Destinations page) — pre-select that country and skip straight to
+  // Step 2's clinic list instead of making the user pick it again.
+  useEffect(() => {
+    const countryName = location.state?.countryName
+    if (!countryName) return
+    const country = COUNTRIES.find(c => c.name === countryName)
+    if (!country) return
+    setForm(f => ({ ...f, countryId: country.id }))
+    setStep(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Fetch clinics for the selected country whenever it changes (retryable).
   const selectedCountry = COUNTRIES.find(c => c.id === form.countryId)

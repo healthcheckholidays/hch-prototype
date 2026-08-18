@@ -241,10 +241,11 @@ export default function HomePage() {
               className="btn btn-primary"
               style={{ borderRadius: 0, padding: '0 20px', fontSize: 13, alignSelf: 'stretch' }}
               onClick={() => {
-                const params = new URLSearchParams()
-                if (dest) params.set('dest', dest)
-                params.set('travellers', travellers)
-                navigate(`/search?${params.toString()}`)
+                if (dest) {
+                  navigate('/book', { state: { countryName: dest } })
+                } else {
+                  navigate('/book')
+                }
               }}
             >
               Search

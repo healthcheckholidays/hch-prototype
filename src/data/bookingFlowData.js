@@ -1,17 +1,20 @@
-// Data for the 10-step /book flow. Japan is the only live destination —
-// other countries are shown greyed out for realism. Clinics and packages
-// are fetched live from Supabase (see src/lib/supabase.js) — only the
-// generic/static parts of the flow stay hardcoded here.
+// Data for the 10-step /book flow. Every destination is fully bookable —
+// Steps 1-3 (country, clinic, package) all fetch live from Supabase and
+// let the user pick freely. Only the generic/static parts of the flow
+// (interests, activity pool, travel windows, etc.) stay hardcoded here.
 
+// countryCode maps each destination to the hospitals.country_code value
+// used to fetch that country's clinics from Supabase in Step 2.
 export const COUNTRIES = [
-  { id: 'japan', name: 'Japan', flag: '🗾', tagline: 'World-leading diagnostics · Tokyo', active: true },
-  { id: 'singapore', name: 'Singapore', flag: '🇸🇬', tagline: 'English-first · No visa required', active: false },
-  { id: 'south-korea', name: 'South Korea', flag: '🇰🇷', tagline: 'Executive check-ups · Seoul', active: false },
-  { id: 'thailand', name: 'Thailand', flag: '🇹🇭', tagline: 'Best value · Bangkok', active: false },
-  { id: 'taiwan', name: 'Taiwan', flag: '🇹🇼', tagline: 'Underrated gem · Taipei', active: false },
-  { id: 'malaysia', name: 'Malaysia', flag: '🇲🇾', tagline: 'Most affordable · Kuala Lumpur', active: false },
-  { id: 'hong-kong', name: 'Hong Kong', flag: '🇭🇰', tagline: 'Advanced tier · English-speaking', active: false },
-  { id: 'vietnam', name: 'Vietnam', flag: '🇻🇳', tagline: 'Emerging destination', active: false },
+  { id: 'japan', name: 'Japan', flag: '🗾', tagline: 'World-leading diagnostics · Tokyo', countryCode: 'JP' },
+  { id: 'singapore', name: 'Singapore', flag: '🇸🇬', tagline: 'English-first · No visa required', countryCode: 'SG' },
+  { id: 'south-korea', name: 'South Korea', flag: '🇰🇷', tagline: 'Executive check-ups · Seoul', countryCode: 'KR' },
+  { id: 'thailand', name: 'Thailand', flag: '🇹🇭', tagline: 'Best value · Bangkok', countryCode: 'TH' },
+  { id: 'taiwan', name: 'Taiwan', flag: '🇹🇼', tagline: 'Underrated gem · Taipei', countryCode: 'TW' },
+  { id: 'malaysia', name: 'Malaysia', flag: '🇲🇾', tagline: 'Most affordable · Kuala Lumpur', countryCode: 'MY' },
+  { id: 'hong-kong', name: 'Hong Kong', flag: '🇭🇰', tagline: 'Advanced tier · English-speaking', countryCode: 'HK' },
+  { id: 'vietnam', name: 'Vietnam', flag: '🇻🇳', tagline: 'Emerging destination', countryCode: 'VN' },
+  { id: 'indonesia', name: 'Indonesia', flag: '🇮🇩', tagline: 'Affordable advanced imaging · Jakarta', countryCode: 'ID' },
 ]
 
 export const PREP_INSTRUCTIONS = [
@@ -32,11 +35,12 @@ export const INTEREST_CATEGORIES = [
   { id: 'social-connection', label: 'Social Connection', emoji: '🤝' },
 ]
 
-// Step 7's centre tile — hardcoded, locked, cannot be moved or deleted.
+// Step 7's centre tile — hardcoded time/title, locked, cannot be moved or
+// deleted. The clinic name is filled in dynamically from the user's Step 2
+// selection (see BookingFlow.jsx), since any clinic can now be booked.
 export const SCREENING_TILE = {
   time: '09:00',
   title: 'Morning Medical Screening',
-  subtitle: 'St. Luke\'s International Hospital',
 }
 
 // Fixed pool of Tokyo experiences for Step 7 — every interest combination
@@ -82,7 +86,7 @@ export const stripeLegalCopy = (clinicName) =>
 // Builds the Day 1 / Day 2 / Day 3+ itinerary for Step 10, blending the
 // user's Step 7 lifestyle tile selections into the travel grid around the
 // locked Day 2 medical screening slot.
-export const buildDynamicItinerary = (finalActivities) => {
+export const buildDynamicItinerary = (finalActivities, clinicName) => {
   const day1 = {
     day: 1,
     label: 'Arrival',
@@ -103,7 +107,7 @@ export const buildDynamicItinerary = (finalActivities) => {
     isHealthDay: true,
     preDayTip: { label: 'Before your screening tomorrow', text: 'Fast for 8 hours before your appointment — water only. Arrive 15 minutes early.' },
     events: [
-      { time: SCREENING_TILE.time, type: 'health', title: SCREENING_TILE.title, description: `${SCREENING_TILE.subtitle} — International Centre. Confirmed slot, locked from your itinerary preview.`, tags: ['Confirmed'] },
+      { time: SCREENING_TILE.time, type: 'health', title: SCREENING_TILE.title, description: `${clinicName || 'Your selected clinic'} — International Centre. Confirmed slot, locked from your itinerary preview.`, tags: ['Confirmed'] },
       { time: 'Afternoon', type: 'explore', title: 'Afternoon Art Gallery', description: 'A relaxed gallery visit to unwind after your screening — Mori Art Museum or teamLab, depending on opening hours.' },
     ],
   }

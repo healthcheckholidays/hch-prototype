@@ -18,7 +18,6 @@ import {
 } from '../data/bookingFlowData'
 
 const STEP_LABELS = ['Country', 'Clinic', 'Package', 'Prepare', 'Journey', 'Interests', 'Itinerary', 'Your info', 'Payment']
-const ACTIVE_CLINIC_NAME = "St. Luke's International Hospital"
 const DIAGNOSTIC_ICONS = [
   { icon: '🧲', label: 'MRI' },
   { icon: '🩻', label: 'X-Ray' },
@@ -47,7 +46,7 @@ export default function BookingFlow() {
 
   // ── Supabase-backed data ────────────────────────────────────────────────
   const [clinics, setClinics] = useState([])
-  const [clinicsLoading, setClinicsLoading] = useState(true)
+  const [clinicsLoading, setClinicsLoading] = useState(false)
   const [clinicsError, setClinicsError] = useState(null)
   const [clinicsRetry, setClinicsRetry] = useState(0)
 
@@ -62,15 +61,21 @@ export default function BookingFlow() {
   const [detailError, setDetailError] = useState(null)
   const [detailRetry, setDetailRetry] = useState(0)
 
-  // Fetch Japan clinics once on mount (retryable).
+  // Fetch clinics for the selected country whenever it changes (retryable).
+  const selectedCountry = COUNTRIES.find(c => c.id === form.countryId)
+
   useEffect(() => {
+    if (!selectedCountry) {
+      setClinics([])
+      return
+    }
     let cancelled = false
     setClinicsLoading(true)
     setClinicsError(null)
     supabase
       .from('hospitals')
       .select('*')
-      .eq('country_code', 'JP')
+      .eq('country_code', selectedCountry.countryCode)
       .eq('active', true)
       .order('name')
       .then(({ data, error }) => {
@@ -84,7 +89,7 @@ export default function BookingFlow() {
         setClinicsLoading(false)
       })
     return () => { cancelled = true }
-  }, [clinicsRetry])
+  }, [selectedCountry?.countryCode, clinicsRetry])
 
   // Fetch packages whenever the selected clinic changes.
   useEffect(() => {
@@ -169,30 +174,26 @@ export default function BookingFlow() {
   }
 
   const selectedClinic = clinics.find(c => c.id === form.clinicId)
-  const activeClinic = clinics.find(c => c.name === ACTIVE_CLINIC_NAME) || clinics[0]
-  const activePackageOption = packageOptions.find(p => p.tier === 'comprehensive') || packageOptions[0]
 
   const selectedPackageOption = packageOptions.find(p => p.id === form.packageId) || null
   const activePackage = packageDetail || selectedPackageOption
   const total = activePackage ? activePackage.price_usd + COORD_FEE : 0
 
-  // Country tile click — auto-advances (accordion collapses Step 1, expands Step 2).
+  // Country tile click — every destination is bookable; auto-advances
+  // (accordion collapses Step 1, expands Step 2).
   function selectCountry(country) {
-    if (!country.active) return
-    set('countryId', country.id)
+    setForm(f => ({ ...f, countryId: country.id, clinicId: '', packageId: '' }))
     setStep(1)
   }
 
-  // Clinic tile click — auto-advances.
+  // Clinic tile click — every fetched clinic is bookable; auto-advances.
   function selectClinicAndAdvance(clinic) {
-    if (activeClinic && clinic.id !== activeClinic.id) return
     setForm(f => ({ ...f, clinicId: clinic.id, packageId: '' }))
     setStep(2)
   }
 
-  // Package tile click — auto-advances.
+  // Package tile click — every fetched package is bookable; auto-advances.
   function selectPackageAndAdvance(pkg) {
-    if (activePackageOption && pkg.id !== activePackageOption.id) return
     set('packageId', pkg.id)
     setStep(3)
   }
@@ -223,7 +224,7 @@ export default function BookingFlow() {
 
   function handlePay() {
     const bookingRef = `HCH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
-    const dynamicDays = buildDynamicItinerary(form.wantsLeisure ? tileActivities.filter(Boolean) : [])
+    const dynamicDays = buildDynamicItinerary(form.wantsLeisure ? tileActivities.filter(Boolean) : [], selectedClinic?.name)
     navigate('/itinerary/tokyo-7day', {
       state: {
         guestName: form.leadName,
@@ -240,7 +241,7 @@ export default function BookingFlow() {
 
   function collapsedSummary(i) {
     switch (i) {
-      case 0: return 'Destination: Japan'
+      case 0: return `Destination: ${selectedCountry?.name || '—'}`
       case 1: return `Clinic: ${selectedClinic?.name || '—'}`
       case 2: return `Package: ${activePackage?.name || '—'}`
       case 3: return 'Package details reviewed'
@@ -298,34 +299,28 @@ export default function BookingFlow() {
           {/* Active step content */}
           <div className="step-expand" key={step}>
 
-            {/* Step 0 — Country tiles */}
+            {/* Step 0 — Country tiles (every destination is bookable) */}
             {step === 0 && (
               <div>
                 <div className="inset">
-                  <strong>Step 1 of 10 — Choose a destination.</strong> Japan is live on the platform today. Other destinations are coming soon.
+                  <strong>Step 1 of 10 — Choose a destination.</strong> Every destination below is live and ready to book.
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8 }}>
                   {COUNTRIES.map(c => (
                     <button
                       key={c.id}
-                      disabled={!c.active}
                       onClick={() => selectCountry(c)}
-                      className={c.active ? 'tile-active-hover' : 'tile-locked'}
+                      className="tile-active-hover"
                       style={{
-                        background: 'var(--hch-sand)',
-                        border: 'var(--border)',
+                        background: form.countryId === c.id ? 'rgba(250,168,5,0.15)' : 'var(--hch-sand)',
+                        border: form.countryId === c.id ? '2px solid var(--hch-gold)' : 'var(--border)',
                         borderRadius: 'var(--radius-md)',
                         padding: '14px 8px',
                         textAlign: 'center',
-                        cursor: c.active ? 'pointer' : 'not-allowed',
+                        cursor: 'pointer',
                         position: 'relative',
                       }}
                     >
-                      {!c.active && (
-                        <span style={{ position: 'absolute', top: 5, right: 5, fontSize: 8, background: '#888', color: '#fff', padding: '1px 4px', borderRadius: 3 }}>
-                          Soon
-                        </span>
-                      )}
                       <div style={{ fontSize: 24, marginBottom: 4 }}>{c.flag}</div>
                       <div style={{ fontSize: 12, fontWeight: 500 }}>{c.name}</div>
                       <div style={{ fontSize: 10, color: '#888', marginTop: 2 }}>{c.tagline}</div>
@@ -335,11 +330,11 @@ export default function BookingFlow() {
               </div>
             )}
 
-            {/* Step 1 — Clinic list (live from Supabase; only one clinic active) */}
+            {/* Step 1 — Clinic list (live from Supabase; every clinic is bookable) */}
             {step === 1 && (
               <div>
                 <div className="inset">
-                  <strong>Step 2 of 10 — Choose a clinic.</strong> All Japan clinics are JCI-accredited or hold equivalent international certification.
+                  <strong>Step 2 of 10 — Choose a clinic.</strong> All {selectedCountry?.name} clinics are JCI-accredited or hold equivalent international certification.
                 </div>
 
                 {clinicsLoading && <LoadingBlock label="Loading clinics…" />}
@@ -349,55 +344,48 @@ export default function BookingFlow() {
 
                 {!clinicsLoading && !clinicsError && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {clinics.map(clinic => {
-                      const isActiveClinic = activeClinic && clinic.id === activeClinic.id
-                      return (
-                        <label
-                          key={clinic.id}
-                          className={`radio-item ${isActiveClinic ? 'tile-active-hover' : 'tile-locked'}`}
-                          onClick={() => selectClinicAndAdvance(clinic)}
-                          style={{ alignItems: 'flex-start' }}
-                        >
-                          <input
-                            type="radio"
-                            name="clinic"
-                            disabled={!isActiveClinic}
-                            checked={form.clinicId === clinic.id}
-                            readOnly
-                            style={{ marginTop: 4 }}
-                          />
-                          <div style={{ flex: 1, display: 'flex', gap: 12 }}>
-                            <div style={{
-                              width: 72, height: 72, borderRadius: 'var(--radius-md)', flexShrink: 0, overflow: 'hidden',
-                              background: 'var(--hch-sand)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
-                            }}>
-                              {clinic.image_url ? (
-                                <img
-                                  src={clinic.image_url}
-                                  alt={clinic.name}
-                                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                  onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }}
-                                />
-                              ) : null}
-                              <span style={{ display: clinic.image_url ? 'none' : 'flex' }}>{clinic.flag}</span>
-                            </div>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-                                <div style={{ fontWeight: 500, fontSize: 14 }}>{clinic.flag} {clinic.name}</div>
-                                {!isActiveClinic && <span className="tag" style={{ fontSize: 9, flexShrink: 0 }}>Fully booked</span>}
-                              </div>
-                              <div style={{ fontSize: 11, color: '#888', margin: '2px 0 6px' }}>{clinic.city} · {clinic.accreditation}</div>
-                              {clinic.specialties && <div style={{ fontSize: 12, color: '#555' }}>{clinic.specialties}</div>}
-                              {clinic.price_min_usd > 0 && (
-                                <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
-                                  From ${clinic.price_min_usd}{clinic.price_max_usd > 0 ? `–$${clinic.price_max_usd}` : ''}
-                                </div>
-                              )}
-                            </div>
+                    {clinics.map(clinic => (
+                      <label
+                        key={clinic.id}
+                        className="radio-item tile-active-hover"
+                        onClick={() => selectClinicAndAdvance(clinic)}
+                        style={{ alignItems: 'flex-start', border: form.clinicId === clinic.id ? '2px solid var(--hch-gold)' : undefined }}
+                      >
+                        <input
+                          type="radio"
+                          name="clinic"
+                          checked={form.clinicId === clinic.id}
+                          readOnly
+                          style={{ marginTop: 4 }}
+                        />
+                        <div style={{ flex: 1, display: 'flex', gap: 12 }}>
+                          <div style={{
+                            width: 72, height: 72, borderRadius: 'var(--radius-md)', flexShrink: 0, overflow: 'hidden',
+                            background: 'var(--hch-sand)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28,
+                          }}>
+                            {clinic.image_url ? (
+                              <img
+                                src={clinic.image_url}
+                                alt={clinic.name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                onError={e => { e.currentTarget.style.display = 'none'; e.currentTarget.nextSibling.style.display = 'flex' }}
+                              />
+                            ) : null}
+                            <span style={{ display: clinic.image_url ? 'none' : 'flex' }}>{clinic.flag}</span>
                           </div>
-                        </label>
-                      )
-                    })}
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontWeight: 500, fontSize: 14 }}>{clinic.flag} {clinic.name}</div>
+                            <div style={{ fontSize: 11, color: '#888', margin: '2px 0 6px' }}>{clinic.city} · {clinic.accreditation}</div>
+                            {clinic.specialties && <div style={{ fontSize: 12, color: '#555' }}>{clinic.specialties}</div>}
+                            {clinic.price_min_usd > 0 && (
+                              <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
+                                From ${clinic.price_min_usd}{clinic.price_max_usd > 0 ? `–$${clinic.price_max_usd}` : ''}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </label>
+                    ))}
                     {clinics.length === 0 && (
                       <div style={{ padding: '16px 0', color: '#888', fontSize: 13 }}>No clinics available right now.</div>
                     )}
@@ -406,11 +394,11 @@ export default function BookingFlow() {
               </div>
             )}
 
-            {/* Step 2 — Package tiles (live from Supabase; side by side; only one active) */}
+            {/* Step 2 — Package tiles (live from Supabase; side by side; every tier bookable) */}
             {step === 2 && (
               <div>
                 <div className="inset">
-                  <strong>Step 3 of 10 — Choose your screening level.</strong> Our most comprehensive tier is available now at {selectedClinic?.name}.
+                  <strong>Step 3 of 10 — Choose your screening level.</strong> All tiers are available at {selectedClinic?.name}.
                 </div>
 
                 {packagesLoading && <LoadingBlock label="Loading packages…" />}
@@ -420,53 +408,47 @@ export default function BookingFlow() {
 
                 {!packagesLoading && !packagesError && (
                   <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.max(1, Math.min(packageOptions.length, 3))}, 1fr)`, gap: 10 }}>
-                    {packageOptions.map(pkg => {
-                      const isActivePkg = activePackageOption && pkg.id === activePackageOption.id
-                      return (
-                        <div
-                          key={pkg.id}
-                          onClick={() => selectPackageAndAdvance(pkg)}
-                          className={isActivePkg ? 'tile-active-hover' : 'tile-locked'}
-                          style={{
-                            border: form.packageId === pkg.id ? '2px solid var(--hch-gold)' : 'var(--border)',
-                            borderRadius: 'var(--radius-lg)',
-                            overflow: 'hidden',
-                            cursor: 'pointer',
-                            position: 'relative',
-                            background: 'var(--hch-sand)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                          }}
-                        >
-                          {(pkg.badge || pkg.tier === 'comprehensive') && (
-                            <span style={{ position: 'absolute', top: 8, right: 8, zIndex: 1, background: 'var(--hch-gold)', color: 'var(--hch-green-800)', fontSize: 9, fontWeight: 600, padding: '2px 7px', borderRadius: 4 }}>
-                              {pkg.badge || 'Most popular'}
-                            </span>
-                          )}
-                          {/* Lifestyle image header (or colour fallback) */}
-                          <div style={{
-                            height: 72, background: pkg.image_url ? undefined : packageFallbackColor(pkg.tier),
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, overflow: 'hidden',
-                          }}>
-                            {pkg.image_url ? (
-                              <img src={pkg.image_url} alt={pkg.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            ) : (selectedClinic?.flag || '🗾')}
-                          </div>
-                          <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                            <div style={{ fontSize: 14, fontWeight: 500, color: tierAccent(pkg.tier) }}>{pkg.name}</div>
-                            <div style={{ fontSize: 11, color: '#666', margin: '2px 0 6px' }}>{pkg.duration} · {capitalize(pkg.tier)}</div>
-                            <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--hch-gold-dark)', marginBottom: 6 }}>
-                              ${pkg.price_usd}<span style={{ fontSize: 10, color: '#888', fontWeight: 400 }}>/person</span>
-                            </div>
-                            {pkg.description && <div style={{ fontSize: 11, color: '#444', lineHeight: 1.5, marginBottom: 8 }}>{pkg.description}</div>}
-                            <IconRow />
-                            {!isActivePkg && (
-                              <div style={{ marginTop: 8, fontSize: 10, color: '#aaa' }}>Not available for this booking</div>
-                            )}
-                          </div>
+                    {packageOptions.map(pkg => (
+                      <div
+                        key={pkg.id}
+                        onClick={() => selectPackageAndAdvance(pkg)}
+                        className="tile-active-hover"
+                        style={{
+                          border: form.packageId === pkg.id ? '2px solid var(--hch-gold)' : 'var(--border)',
+                          borderRadius: 'var(--radius-lg)',
+                          overflow: 'hidden',
+                          cursor: 'pointer',
+                          position: 'relative',
+                          background: 'var(--hch-sand)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                        }}
+                      >
+                        {(pkg.badge || pkg.tier === 'comprehensive') && (
+                          <span style={{ position: 'absolute', top: 8, right: 8, zIndex: 1, background: 'var(--hch-gold)', color: 'var(--hch-green-800)', fontSize: 9, fontWeight: 600, padding: '2px 7px', borderRadius: 4 }}>
+                            {pkg.badge || 'Most popular'}
+                          </span>
+                        )}
+                        {/* Lifestyle image header (or colour fallback) */}
+                        <div style={{
+                          height: 72, background: pkg.image_url ? undefined : packageFallbackColor(pkg.tier),
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, overflow: 'hidden',
+                        }}>
+                          {pkg.image_url ? (
+                            <img src={pkg.image_url} alt={pkg.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ) : (selectedClinic?.flag || '🗾')}
                         </div>
-                      )
-                    })}
+                        <div style={{ padding: '12px 14px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                          <div style={{ fontSize: 14, fontWeight: 500, color: tierAccent(pkg.tier) }}>{pkg.name}</div>
+                          <div style={{ fontSize: 11, color: '#666', margin: '2px 0 6px' }}>{pkg.duration} · {capitalize(pkg.tier)}</div>
+                          <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--hch-gold-dark)', marginBottom: 6 }}>
+                            ${pkg.price_usd}<span style={{ fontSize: 10, color: '#888', fontWeight: 400 }}>/person</span>
+                          </div>
+                          {pkg.description && <div style={{ fontSize: 11, color: '#444', lineHeight: 1.5, marginBottom: 8 }}>{pkg.description}</div>}
+                          <IconRow />
+                        </div>
+                      </div>
+                    ))}
                     {packageOptions.length === 0 && (
                       <div style={{ padding: '16px 0', color: '#888', fontSize: 13 }}>No packages available for this clinic yet.</div>
                     )}
@@ -732,7 +714,7 @@ export default function BookingFlow() {
         {/* Persistent sidebar */}
         <div className="side-col booking-side-col">
           <PersistentSidebar
-            country={form.countryId ? 'Japan' : null}
+            country={selectedCountry?.name || null}
             clinicName={selectedClinic?.name || null}
             packageName={activePackage?.name || null}
             price={activePackage ? total : null}

@@ -22,7 +22,7 @@ export default function CorporatePage() {
           Health Check <span style={{ color: '#FAA805' }}>Holidays</span>
         </span>
         <a
-          href="mailto:info@go-hch.com"
+          href="mailto:admin@go-hch.com"
           style={{
             background: '#FAA805',
             color: '#145247',
@@ -80,7 +80,7 @@ export default function CorporatePage() {
             yet open for bookings.
           </p>
           <a
-            href="mailto:info@go-hch.com"
+            href="mailto:admin@go-hch.com"
             style={{
               background: '#FAA805',
               color: '#145247',

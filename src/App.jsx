@@ -14,10 +14,19 @@ import SearchResultsPage from './pages/SearchResultsPage'
 import ConfirmationPage from './pages/ConfirmationPage'
 import TestSelectorPage from './pages/TestSelectorPage'
 import BookingFlow from './pages/BookingFlow'
+import CorporatePage from './pages/CorporatePage'
+import DemoNotice from './components/DemoNotice'
+
+const PUBLIC_HOSTS = ['go-hch.com', 'www.go-hch.com']
 
 export default function App() {
+  if (typeof window !== 'undefined' && PUBLIC_HOSTS.includes(window.location.hostname)) {
+    return <CorporatePage />
+  }
+
   return (
     <BrowserRouter>
+      <DemoNotice />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/destinations" element={<DestinationsPage />} />

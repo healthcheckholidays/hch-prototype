@@ -4,7 +4,7 @@ export function TopBar() {
   return (
     <nav className="top-bar">
       <NavLink to="/" className="logo">
-        Health Check <span>Holidays</span>
+        Health Check <span>Holidays</span> <small style={{ fontWeight: 400, opacity: 0.6, fontSize: '0.6em' }}>(Alpha)</small>
       </NavLink>
       <div className="top-nav">
         <NavLink to="/" className={({ isActive }) => isActive ? 'active' : ''} end>Home</NavLink>

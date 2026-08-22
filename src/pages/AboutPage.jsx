@@ -49,7 +49,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section style={{ ...sectionStyle, maxWidth: 800, paddingTop: 0 }}>
+      <section style={{ ...sectionStyle, paddingTop: 0 }}>
         <div
           style={{
             color: '#FAA805',
@@ -125,43 +125,39 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section
-        style={{
-          background: 'rgba(0,0,0,0.18)',
-          padding: '64px 48px',
-          textAlign: 'center',
-        }}
-      >
-        <h2
-          style={{
-            fontFamily: "'Playfair Display', serif",
-            color: '#fff',
-            fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
-            maxWidth: '22ch',
-            margin: '0 auto',
-          }}
-        >
-          Your next check-up could come with a boarding pass.
-        </h2>
-        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem', marginTop: '14px' }}>
-          Booking is opening soon — reach out and we'll sketch an itinerary around your family's
-          needs.
-        </p>
-        <a
-          href="mailto:info@go-hch.com"
-          style={{
-            background: '#FAA805',
-            color: '#145247',
-            fontWeight: 600,
-            padding: '14px 32px',
-            borderRadius: 999,
-            textDecoration: 'none',
-            display: 'inline-block',
-            marginTop: '26px',
-          }}
-        >
-          Get in touch →
-        </a>
+      <section style={{ background: 'rgba(0,0,0,0.18)' }}>
+        <div style={{ ...sectionStyle, textAlign: 'center' }}>
+          <h2
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              color: '#fff',
+              fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
+              maxWidth: '22ch',
+              margin: '0 auto',
+            }}
+          >
+            Your next check-up could come with a boarding pass.
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem', marginTop: '14px' }}>
+            Booking is opening soon — reach out and we'll sketch an itinerary around your
+            family's needs.
+          </p>
+          <a
+            href="mailto:info@go-hch.com"
+            style={{
+              background: '#FAA805',
+              color: '#145247',
+              fontWeight: 600,
+              padding: '14px 32px',
+              borderRadius: 999,
+              textDecoration: 'none',
+              display: 'inline-block',
+              marginTop: '26px',
+            }}
+          >
+            Get in touch →
+          </a>
+        </div>
       </section>
 
       <section style={{ ...sectionStyle, paddingTop: '64px', paddingBottom: '80px' }}>

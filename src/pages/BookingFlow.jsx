@@ -29,7 +29,7 @@ export default function BookingFlow() {
   const location = useLocation()
   const [step, setStep] = useState(0)
   const [showCheckout, setShowCheckout] = useState(false)
-  const [card, setCard] = useState({ number: '', expiry: '', cvc: '', name: '' })
+  const [card] = useState({ number: '4242 4242 4242 4242', expiry: '12/34', cvc: '123', name: 'Demo User' })
   const [tileActivities, setTileActivities] = useState(Array(8).fill(null))
 
   const [form, setForm] = useState({
@@ -234,7 +234,7 @@ export default function BookingFlow() {
     form.travelWindow &&
     MEDICAL_QUESTIONS.every(q => form.medical[q.id] !== null)
 
-  const canPay = card.number.trim() && card.expiry.trim() && card.cvc.trim() && card.name.trim()
+  const canPay = true
 
   function handlePay() {
     const bookingRef = `HCH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
@@ -752,11 +752,13 @@ export default function BookingFlow() {
               </div>
 
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
-                <span className="tag tag-green">🔒 Stripe Verified</span>
-                <span className="tag"> Apple Pay</span>
-                <span className="tag">VISA</span>
-                <span className="tag">Mastercard</span>
-                <span className="tag">AMEX</span>
+                <span className="tag">🧪 Demo checkout — simulated only</span>
+              </div>
+
+              <div style={{ fontSize: 11, color: '#888', marginBottom: 14, lineHeight: 1.5 }}>
+                This is not a real payment form. It's pre-filled with a test card and isn't
+                connected to Stripe or any payment processor — no card data is collected, sent
+                anywhere, or stored.
               </div>
 
               <div className="form-group">
@@ -764,34 +766,31 @@ export default function BookingFlow() {
                 <input className="form-input" value={form.leadEmail} readOnly />
               </div>
               <div className="form-group">
-                <label className="form-label">Card information</label>
+                <label className="form-label">Card information (demo — not editable)</label>
                 <input
                   className="form-input"
-                  placeholder="1234 1234 1234 1234"
                   value={card.number}
-                  onChange={e => setCard(c => ({ ...c, number: e.target.value }))}
-                  style={{ borderRadius: '8px 8px 0 0', marginBottom: -1 }}
+                  readOnly
+                  style={{ borderRadius: '8px 8px 0 0', marginBottom: -1, background: '#f4f4f4' }}
                 />
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
                   <input
                     className="form-input"
-                    placeholder="MM / YY"
                     value={card.expiry}
-                    onChange={e => setCard(c => ({ ...c, expiry: e.target.value }))}
-                    style={{ borderRadius: '0 0 0 8px' }}
+                    readOnly
+                    style={{ borderRadius: '0 0 0 8px', background: '#f4f4f4' }}
                   />
                   <input
                     className="form-input"
-                    placeholder="CVC"
                     value={card.cvc}
-                    onChange={e => setCard(c => ({ ...c, cvc: e.target.value }))}
-                    style={{ borderRadius: '0 0 8px 0', borderLeft: 'none' }}
+                    readOnly
+                    style={{ borderRadius: '0 0 8px 0', borderLeft: 'none', background: '#f4f4f4' }}
                   />
                 </div>
               </div>
               <div className="form-group">
                 <label className="form-label">Name on card</label>
-                <input className="form-input" placeholder="Full name" value={card.name} onChange={e => setCard(c => ({ ...c, name: e.target.value }))} />
+                <input className="form-input" value={card.name} readOnly style={{ background: '#f4f4f4' }} />
               </div>
 
               <button

@@ -1,4 +1,6 @@
 import CorporateHeader from '../components/CorporateHeader'
+import CorporateFooter from '../components/CorporateFooter'
+import Logo from '../components/Logo'
 
 export default function CorporatePage() {
   return (
@@ -14,8 +16,11 @@ export default function CorporatePage() {
     >
       <CorporateHeader />
 
-      <main style={{ flex: 1, display: 'flex', alignItems: 'center', padding: '0 48px 48px' }}>
+      <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 48px 48px' }}>
         <div style={{ maxWidth: 640 }}>
+          <div style={{ marginBottom: '20px' }}>
+            <Logo size={44} />
+          </div>
           <div
             style={{
               color: '#FAA805',
@@ -111,9 +116,7 @@ export default function CorporatePage() {
         </div>
       </main>
 
-      <footer style={{ padding: '24px 48px', color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem' }}>
-        Nothing on this site constitutes a booking, offer, or medical advice.
-      </footer>
+      <CorporateFooter />
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import CorporateHeader from '../components/CorporateHeader'
+import CorporateFooter from '../components/CorporateFooter'
 import CostTicket from '../components/CostTicket'
 
 const sectionStyle = {
@@ -50,6 +51,10 @@ export default function AboutPage() {
           The math
         </div>
         <CostTicket />
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', marginTop: '14px' }}>
+          Figures are illustrative estimates for comparison purposes and will vary by clinic,
+          package, and travel dates.
+        </p>
       </section>
 
       <section style={{ ...sectionStyle, paddingTop: 0 }}>
@@ -120,9 +125,7 @@ export default function AboutPage() {
         </a>
       </section>
 
-      <footer style={{ padding: '24px 48px', color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem' }}>
-        Nothing on this site constitutes a booking, offer, or medical advice.
-      </footer>
+      <CorporateFooter />
     </div>
   )
 }

@@ -16,6 +16,7 @@ import TestSelectorPage from './pages/TestSelectorPage'
 import BookingFlow from './pages/BookingFlow'
 import CorporatePage from './pages/CorporatePage'
 import AboutPage from './pages/AboutPage'
+import PrivacyPage from './pages/PrivacyPage'
 import DemoNotice from './components/DemoNotice'
 
 const PUBLIC_HOSTS = ['go-hch.com', 'www.go-hch.com']
@@ -27,6 +28,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<CorporatePage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

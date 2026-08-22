@@ -21,6 +21,18 @@ export default function AboutPage() {
       <CorporateHeader />
 
       <section style={sectionStyle}>
+        <div
+          style={{
+            color: '#FAA805',
+            letterSpacing: '2px',
+            fontSize: '0.75rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            marginBottom: '16px',
+          }}
+        >
+          About us
+        </div>
         <h1
           style={{
             fontFamily: "'Playfair Display', serif",
@@ -29,11 +41,11 @@ export default function AboutPage() {
             marginBottom: '24px',
           }}
         >
-          About Health Check Holidays
+          A check-up that gives you something back.
         </h1>
         <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: 1.8 }}>
-          We're focused on one thing: curated health checks, bundled with a holiday, for the
-          whole family — at a fraction of the cost of screenings closer to home.
+          Preventive care in the US is priced like a luxury. We pair the same hospital-grade
+          screenings with a trip to Japan — so your family leaves with results, and a holiday.
         </p>
       </section>
 
@@ -50,7 +62,26 @@ export default function AboutPage() {
         >
           The math
         </div>
+        <h2
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            color: '#fff',
+            fontSize: 'clamp(1.4rem, 2.6vw, 1.9rem)',
+            marginBottom: '24px',
+            maxWidth: '18ch',
+          }}
+        >
+          Same peace of mind. Half the price. A holiday included.
+        </h2>
         <CostTicket />
+        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: 1.8, marginTop: '28px' }}>
+          A comprehensive health screening for a family of four in San Francisco can run upwards
+          of <strong style={{ color: '#FAA805' }}>$50,000</strong>. The same family can fly to
+          Japan, stay in beautiful hotels, complete equivalent — often more thorough —
+          screenings, and still come home with a shared holiday behind them. All for around{' '}
+          <strong style={{ color: '#FAA805' }}>$25,000</strong>. Half the cost. A memory instead
+          of a bill.
+        </p>
         <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.8rem', marginTop: '14px' }}>
           Figures are illustrative estimates for comparison purposes and will vary by clinic,
           package, and travel dates.
@@ -94,7 +125,46 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section style={{ ...sectionStyle, paddingTop: 0, paddingBottom: '80px' }}>
+      <section
+        style={{
+          background: 'rgba(0,0,0,0.18)',
+          padding: '64px 48px',
+          textAlign: 'center',
+        }}
+      >
+        <h2
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            color: '#fff',
+            fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
+            maxWidth: '22ch',
+            margin: '0 auto',
+          }}
+        >
+          Your next check-up could come with a boarding pass.
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem', marginTop: '14px' }}>
+          Booking is opening soon — reach out and we'll sketch an itinerary around your family's
+          needs.
+        </p>
+        <a
+          href="mailto:info@go-hch.com"
+          style={{
+            background: '#FAA805',
+            color: '#145247',
+            fontWeight: 600,
+            padding: '14px 32px',
+            borderRadius: 999,
+            textDecoration: 'none',
+            display: 'inline-block',
+            marginTop: '26px',
+          }}
+        >
+          Get in touch →
+        </a>
+      </section>
+
+      <section style={{ ...sectionStyle, paddingTop: '64px', paddingBottom: '80px' }}>
         <h2
           style={{
             fontFamily: "'Playfair Display', serif",

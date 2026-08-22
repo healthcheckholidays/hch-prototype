@@ -115,7 +115,7 @@ export default function CostTicket() {
         <div className="perf" aria-hidden="true" />
         <div className="stub to">
           <p className="field-label">Screening + holiday</p>
-          <p className="place">Taiwan</p>
+          <p className="place">Japan</p>
           <p className="amount">$25,000</p>
           <p className="fine">Family of four — flights, hotels, and equivalent screenings, included.</p>
           <span className="kind">Away</span>

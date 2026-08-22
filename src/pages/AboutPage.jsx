@@ -72,9 +72,9 @@ export default function AboutPage() {
         <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.95rem', lineHeight: 1.9 }}>
           Health Check Holidays Ltd
           <br />
-          Registered in England &amp; Wales, Company No. [XXXXXXX]
+          Registered in England &amp; Wales, Company No. 17079237
           <br />
-          Registered office: [Company address]
+          Registered office: 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ, United Kingdom
         </p>
       </section>
 

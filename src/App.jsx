@@ -15,13 +15,22 @@ import ConfirmationPage from './pages/ConfirmationPage'
 import TestSelectorPage from './pages/TestSelectorPage'
 import BookingFlow from './pages/BookingFlow'
 import CorporatePage from './pages/CorporatePage'
+import AboutPage from './pages/AboutPage'
 import DemoNotice from './components/DemoNotice'
 
 const PUBLIC_HOSTS = ['go-hch.com', 'www.go-hch.com']
 
 export default function App() {
   if (typeof window !== 'undefined' && PUBLIC_HOSTS.includes(window.location.hostname)) {
-    return <CorporatePage />
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<CorporatePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    )
   }
 
   return (

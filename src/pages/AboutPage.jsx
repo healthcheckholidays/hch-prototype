@@ -1,0 +1,117 @@
+import CorporateHeader from '../components/CorporateHeader'
+
+const sectionStyle = {
+  maxWidth: 720,
+  margin: '0 auto',
+  padding: '64px 48px',
+}
+
+export default function AboutPage() {
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(160deg, #0e3a32 0%, #145247 60%, #0e3a32 100%)',
+        color: '#fff',
+        fontFamily: "'Inter', sans-serif",
+      }}
+    >
+      <CorporateHeader />
+
+      <section style={sectionStyle}>
+        <h1
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            color: '#fff',
+            fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+            marginBottom: '24px',
+          }}
+        >
+          About Health Check Holidays
+        </h1>
+        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '20px' }}>
+          We're focused on one thing: curated health checks, bundled with a holiday, for the
+          whole family — at a fraction of the cost of screenings closer to home.
+        </p>
+        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: 1.8 }}>
+          As an example, a comprehensive health screening for a family of four in San Francisco
+          can cost upwards of $50,000. The same family could complete equivalent screenings in
+          Taiwan — flights, hotels, and all — for around $25,000, with a holiday built in
+          alongside it.
+        </p>
+      </section>
+
+      <section style={{ ...sectionStyle, paddingTop: 0 }}>
+        <h2
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            color: '#fff',
+            fontSize: '1.4rem',
+            marginBottom: '16px',
+          }}
+        >
+          Supported by
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.95rem', lineHeight: 1.7 }}>
+          We're building relationships with clinical and travel partners across Asia. Details of
+          our partners and backers will be published here as agreements are finalised.
+        </p>
+      </section>
+
+      <section style={{ ...sectionStyle, paddingTop: 0 }}>
+        <h2
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            color: '#fff',
+            fontSize: '1.4rem',
+            marginBottom: '16px',
+          }}
+        >
+          Company details
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.95rem', lineHeight: 1.9 }}>
+          Health Check Holidays Ltd
+          <br />
+          Registered in England &amp; Wales, Company No. [XXXXXXX]
+          <br />
+          Registered office: [Company address]
+        </p>
+      </section>
+
+      <section style={{ ...sectionStyle, paddingTop: 0, paddingBottom: '80px' }}>
+        <h2
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            color: '#fff',
+            fontSize: '1.4rem',
+            marginBottom: '16px',
+          }}
+        >
+          Investors
+        </h2>
+        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: '24px' }}>
+          If you'd like to learn more about Health Check Holidays as an investment opportunity,
+          we'd love to hear from you.
+        </p>
+        <a
+          href="mailto:investors@go-hch.com"
+          style={{
+            background: '#FAA805',
+            color: '#145247',
+            fontWeight: 600,
+            padding: '14px 32px',
+            borderRadius: 999,
+            textDecoration: 'none',
+            display: 'inline-block',
+          }}
+        >
+          Contact our investor relations team
+        </a>
+      </section>
+
+      <footer style={{ padding: '24px 48px', color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem' }}>
+        Nothing on this site constitutes a booking, offer, or medical advice.
+      </footer>
+    </div>
+  )
+}

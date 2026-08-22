@@ -1,4 +1,5 @@
 import CorporateHeader from '../components/CorporateHeader'
+import CostTicket from '../components/CostTicket'
 
 const sectionStyle = {
   maxWidth: 720,
@@ -29,16 +30,26 @@ export default function AboutPage() {
         >
           About Health Check Holidays
         </h1>
-        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '20px' }}>
+        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: 1.8 }}>
           We're focused on one thing: curated health checks, bundled with a holiday, for the
           whole family — at a fraction of the cost of screenings closer to home.
         </p>
-        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: 1.8 }}>
-          As an example, a comprehensive health screening for a family of four in San Francisco
-          can cost upwards of $50,000. The same family could complete equivalent screenings in
-          Taiwan — flights, hotels, and all — for around $25,000, with a holiday built in
-          alongside it.
-        </p>
+      </section>
+
+      <section style={{ ...sectionStyle, maxWidth: 800, paddingTop: 0 }}>
+        <div
+          style={{
+            color: '#FAA805',
+            letterSpacing: '2px',
+            fontSize: '0.75rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            marginBottom: '16px',
+          }}
+        >
+          The math
+        </div>
+        <CostTicket />
       </section>
 
       <section style={{ ...sectionStyle, paddingTop: 0 }}>

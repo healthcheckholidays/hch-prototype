@@ -79,8 +79,8 @@ export default function PrivacyPage() {
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.95rem', lineHeight: 1.8 }}>
             Questions about this notice? Email{' '}
-            <a href="mailto:info@go-hch.com" style={{ color: '#FAA805', fontWeight: 600 }}>
-              info@go-hch.com
+            <a href="mailto:dpo@go-hch.com" style={{ color: '#FAA805', fontWeight: 600 }}>
+              dpo@go-hch.com
             </a>
             .
           </p>

@@ -25,14 +25,17 @@ export const PREP_INSTRUCTIONS = [
   'Arrive 15 minutes early to complete check-in at the International Centre.',
 ]
 
-// The 6 fixed interest categories from the CEO spec.
+// The 9 fixed interest categories, laid out as a 3x3 grid.
 export const INTEREST_CATEGORIES = [
   { id: 'art-culture', label: 'Art & Culture', emoji: '🎨' },
   { id: 'food-dining', label: 'Food & Dining', emoji: '🍜' },
-  { id: 'historic-sites', label: 'Historic Sites', emoji: '⛩️' },
-  { id: 'nature-hiking', label: 'Nature & Hiking', emoji: '🥾' },
-  { id: 'sports-watching', label: 'Sports Watching', emoji: '🏟️' },
-  { id: 'social-connection', label: 'Social Connection', emoji: '🤝' },
+  { id: 'historic-sites', label: 'Historic Sites', emoji: '🏯' },
+  { id: 'nature-hiking', label: 'Nature & Hiking', emoji: '🌿' },
+  { id: 'social', label: 'Social', emoji: '👥' },
+  { id: 'wellness', label: 'Wellness', emoji: '🧘' },
+  { id: 'sports-events', label: 'Sports & Events', emoji: '🏟️' },
+  { id: 'retail-design', label: 'Retail & Design', emoji: '🛍️' },
+  { id: 'nightlife', label: 'Nightlife', emoji: '🌙' },
 ]
 
 // Step 7's centre tile — hardcoded time/title, locked, cannot be moved or
@@ -52,12 +55,36 @@ export const TOKYO_ACTIVITIES = [
   { emoji: '🎨', title: 'Mori Art Museum' },
   { emoji: '🍜', title: 'Tsukiji Outer Market food tour' },
   { emoji: '🥾', title: 'Mount Takao day hike' },
-  { emoji: '🏟️', title: 'Sumo tournament at Ryogoku Kokugikan' },
   { emoji: '🤝', title: 'Izakaya crawl with a local guide' },
   { emoji: '🌳', title: 'Shinjuku Gyoen National Garden' },
-  { emoji: '🛍️', title: 'Ginza flagship stores' },
   { emoji: '🌃', title: 'Shibuya Sky sunset & bar' },
   { emoji: '♨️', title: 'Hakone onsen day trip' },
+
+  // Wellness
+  { emoji: '♨️', title: 'Private onsen at a traditional Tokyo bathhouse' },
+  { emoji: '🥗', title: 'Nutrition consultation with a dietitian' },
+  { emoji: '🌿', title: 'Kampo herbal medicine consultation' },
+  { emoji: '🧘', title: 'Morning meditation at Senso-ji Temple' },
+  { emoji: '💪', title: 'Personal training at a premium Tokyo studio' },
+  { emoji: '🍱', title: "Longevity dining — washoku chef's table" },
+
+  // Sports & Events
+  { emoji: '🏟️', title: 'Sumo wrestling tournament at Ryogoku Kokugikan' },
+  { emoji: '⚾', title: 'Baseball game at Tokyo Dome' },
+  { emoji: '⚽', title: 'J-League football match' },
+  { emoji: '🥋', title: 'Martial arts demonstration at Nippon Budokan' },
+
+  // Retail & Design
+  { emoji: '🛍️', title: 'Ginza luxury shopping district' },
+  { emoji: '🧵', title: 'Shimokitazawa vintage and design markets' },
+  { emoji: '📚', title: 'Tsutaya Books and design culture in Daikanyama' },
+  { emoji: '🎁', title: 'Tokyu Hands creative lifestyle store' },
+
+  // Nightlife
+  { emoji: '🎷', title: 'Jazz bar in Shinjuku' },
+  { emoji: '🌆', title: 'Rooftop bar with Tokyo skyline views' },
+  { emoji: '✨', title: 'TeamLab digital art evening experience' },
+  { emoji: '🎭', title: 'Kabuki or traditional theatre performance' },
 ]
 
 // Preferred travel window options for Step 8.

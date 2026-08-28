@@ -45,7 +45,7 @@ export default function AboutPage() {
         </h1>
         <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '1.05rem', lineHeight: 1.8 }}>
           Preventive care in the US is priced like a luxury. We pair the same hospital-grade
-          screenings with a trip to Japan — so your family leaves with results, and a holiday.
+          screenings with a trip to Asia — so your family leaves with results, and a holiday.
         </p>
       </section>
 

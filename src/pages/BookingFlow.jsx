@@ -579,7 +579,7 @@ export default function BookingFlow() {
                     )
                   })}
                 </div>
-                <StepNav onBack={goBack} onNext={goNext} canNext={form.interests.length > 0} label="Generate My Itinerary" />
+                <StepNav onBack={goBack} onNext={goNext} canNext={true} label="Generate My Itinerary" />
               </div>
             )}
 

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
 
@@ -21,8 +22,25 @@ import DemoNotice from './components/DemoNotice'
 
 const PUBLIC_HOSTS = ['go-hch.com', 'www.go-hch.com']
 
+function useRobotsMeta(isPublic) {
+  useEffect(() => {
+    const existing = document.querySelector('meta[name="robots"]')
+    if (isPublic) {
+      existing?.remove()
+      return
+    }
+    const meta = existing ?? document.createElement('meta')
+    meta.setAttribute('name', 'robots')
+    meta.setAttribute('content', 'noindex, nofollow')
+    if (!existing) document.head.appendChild(meta)
+  }, [isPublic])
+}
+
 export default function App() {
-  if (typeof window !== 'undefined' && PUBLIC_HOSTS.includes(window.location.hostname)) {
+  const isPublic = typeof window !== 'undefined' && PUBLIC_HOSTS.includes(window.location.hostname)
+  useRobotsMeta(isPublic)
+
+  if (isPublic) {
     return (
       <BrowserRouter>
         <Routes>

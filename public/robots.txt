@@ -1,2 +1,6 @@
+# demo.go-hch.com - work-in-progress product preview.
+# Crawling is allowed so that the X-Robots-Tag: noindex on every response
+# (set via customHttp.yml) can be seen and acted on. Not for public indexing.
+
 User-agent: *
 Allow: /

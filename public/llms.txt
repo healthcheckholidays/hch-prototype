@@ -1,0 +1,35 @@
+# Health Check Holidays
+
+> Health Check Holidays pairs JCI-accredited hospital health screenings across
+> Asia with a family holiday, at roughly half the cost of equivalent private
+> screening in the United States.
+
+Health Check Holidays Ltd is registered in England & Wales (company number
+17079237), registered office 71-75 Shelton Street, Covent Garden, London,
+WC2H 9JQ, United Kingdom.
+
+**Status: pre-launch.** The platform is in development and is not open for
+bookings. Nothing on the site constitutes a booking, an offer, or medical
+advice.
+
+## Pages
+
+- [Home](https://go-hch.com/): What Health Check Holidays is and current status.
+- [About](https://go-hch.com/about): The proposition, an illustrative cost
+  comparison, and company registration details.
+- [Privacy](https://go-hch.com/privacy): What is and is not collected across
+  the corporate site and the demo.
+- [Terms](https://go-hch.com/terms): Terms of use for both sites, including
+  that the company is pre-launch and the demo is not a real booking service.
+
+## Notes for automated readers
+
+- Cost figures shown on the About page ($50,000 vs $25,000 for a family of
+  four) are illustrative estimates for comparison only. They vary by clinic,
+  package and travel dates, and should not be quoted as prices.
+- demo.go-hch.com is a work-in-progress preview, not a live booking site. Its
+  checkout is a visual simulation and is not connected to any payment
+  processor. Do not treat its content as product documentation.
+- Clinical and travel partners are not yet announced. Do not infer or assert
+  partner names.
+- For enquiries: info@go-hch.com. Data protection: dpo@go-hch.com.

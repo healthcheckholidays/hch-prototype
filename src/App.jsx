@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import './index.css'
+import { useSeo } from './seo'
 
 import HomePage from './pages/HomePage'
 import DestinationsPage from './pages/DestinationsPage'
@@ -23,27 +23,18 @@ import DemoNotice from './components/DemoNotice'
 
 const PUBLIC_HOSTS = ['go-hch.com', 'www.go-hch.com']
 
-function useRobotsMeta(isPublic) {
-  useEffect(() => {
-    const existing = document.querySelector('meta[name="robots"]')
-    if (isPublic) {
-      existing?.remove()
-      return
-    }
-    const meta = existing ?? document.createElement('meta')
-    meta.setAttribute('name', 'robots')
-    meta.setAttribute('content', 'noindex, nofollow')
-    if (!existing) document.head.appendChild(meta)
-  }, [isPublic])
+function Seo() {
+  useSeo(useLocation().pathname)
+  return null
 }
 
 export default function App() {
   const isPublic = typeof window !== 'undefined' && PUBLIC_HOSTS.includes(window.location.hostname)
-  useRobotsMeta(isPublic)
 
   if (isPublic) {
     return (
       <BrowserRouter>
+        <Seo />
         <Routes>
           <Route path="/" element={<CorporatePage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -57,6 +48,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <Seo />
       <DemoNotice />
       <Routes>
         <Route path="/" element={<HomePage />} />

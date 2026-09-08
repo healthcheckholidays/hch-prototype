@@ -1,2 +1,14 @@
+# go-hch.com — corporate site
+# Public. Crawling and indexing allowed.
+#
+# Unfinished product routes (/shop, /book, /account, /results/... etc.) are
+# kept out of the index with a per-route "noindex" meta tag, set by src/seo.js
+# — deliberately NOT with Disallow rules here. A Disallow would stop crawlers
+# fetching those pages at all, which means they'd never see the noindex, and
+# they could still be indexed URL-only from inbound links. Allow the crawl,
+# let the noindex do the work.
+
 User-agent: *
 Allow: /
+
+Sitemap: https://go-hch.com/sitemap.xml

@@ -1,0 +1,10 @@
+/* TEAM */
+    Health Check Holidays Ltd
+    Site: https://go-hch.com
+    Contact: info [at] go-hch.com
+    Location: London, United Kingdom
+
+/* SITE */
+    Standards: HTML5, CSS3
+    Components: React, React Router, Vite
+    Typefaces: Playfair Display, Inter

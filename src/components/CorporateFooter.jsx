@@ -17,9 +17,14 @@ export default function CorporateFooter() {
         © 2026 Health Check Holidays Ltd. Nothing on this site constitutes a booking, offer, or
         medical advice.
       </span>
-      <NavLink to="/privacy" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem' }}>
-        Privacy
-      </NavLink>
+      <div style={{ display: 'flex', gap: '20px' }}>
+        <NavLink to="/privacy" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem' }}>
+          Privacy
+        </NavLink>
+        <NavLink to="/terms" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem' }}>
+          Terms
+        </NavLink>
+      </div>
     </footer>
   )
 }

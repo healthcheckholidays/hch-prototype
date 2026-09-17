@@ -61,8 +61,8 @@ export default function TermsPage() {
         <section style={{ ...sectionStyle, paddingTop: 0 }}>
           <h2 style={h2Style}>Who we are</h2>
           <p style={{ ...pStyle, marginBottom: 0 }}>
-            These sites are operated by Health Check Holidays Ltd, registered in England &amp;
-            Wales, company number 17079237, registered office 71-75 Shelton Street, Covent
+            These sites are operated by KELCROFT LTD, registered in England &amp;
+            Wales, company number 17419745, registered office 71-75 Shelton Street, Covent
             Garden, London, WC2H 9JQ, United Kingdom. Contact us at{' '}
             <a href="mailto:info@go-hch.com" style={linkStyle}>info@go-hch.com</a>.
           </p>
@@ -132,8 +132,8 @@ export default function TermsPage() {
         <section style={{ ...sectionStyle, paddingTop: 0 }}>
           <h2 style={h2Style}>Our content</h2>
           <p style={{ ...pStyle, marginBottom: 0 }}>
-            The content, design, branding and code of these sites belong to Health Check Holidays
-            Ltd or our licensors, and are protected by copyright and trade mark law. You may view
+            The content, design, branding and code of these sites belong to KELCROFT LTD
+            or our licensors, and are protected by copyright and trade mark law. You may view
             and print pages for your own use, and share links to them. You may not otherwise copy,
             adapt or republish material from the sites without our permission.
           </p>
@@ -190,7 +190,7 @@ export default function TermsPage() {
             <a href="mailto:dpo@go-hch.com" style={linkStyle}>dpo@go-hch.com</a>.
           </p>
           <p style={{ ...pStyle, marginBottom: 0, color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>
-            Health Check Holidays Ltd, registered in England &amp; Wales, company number 17079237.
+            KELCROFT LTD, registered in England &amp; Wales, company number 17419745.
             Registered office: 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ, United
             Kingdom.
           </p>

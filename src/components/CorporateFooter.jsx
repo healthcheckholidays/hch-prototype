@@ -21,7 +21,7 @@ export default function CorporateFooter() {
         }}
       >
         <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.8rem' }}>
-          © 2026 Health Check Holidays Ltd. Nothing on this site constitutes a booking, offer, or
+          © 2026 KELCROFT LTD. Nothing on this site constitutes a booking, offer, or
           medical advice.
         </span>
         <div style={{ display: 'flex', gap: '20px' }}>
@@ -34,7 +34,7 @@ export default function CorporateFooter() {
         </div>
       </div>
       <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.75rem' }}>
-        Health Check Holidays Ltd, registered in England &amp; Wales, company no. 17079237.
+        KELCROFT LTD, registered in England &amp; Wales, company no. 17419745.
         Registered office: 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ, United Kingdom.
       </span>
     </footer>

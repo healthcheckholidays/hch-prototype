@@ -50,7 +50,7 @@ export default function PrivacyPage() {
             Privacy Notice
           </h1>
           <p style={pStyle}>
-            This notice explains what personal data Health Check Holidays Ltd collects, why, and
+            This notice explains what personal data KELCROFT LTD collects, why, and
             what you can do about it. We are pre-launch and not open for bookings, so there is
             less here than there will be — but we would rather tell you precisely what happens
             now than write a notice for a business we are not yet running.
@@ -63,8 +63,8 @@ export default function PrivacyPage() {
         <section style={{ ...sectionStyle, paddingTop: 0 }}>
           <h2 style={h2Style}>Who we are</h2>
           <p style={pStyle}>
-            Health Check Holidays Ltd is the data controller. We are registered in England &amp;
-            Wales, company number 17079237, at 71-75 Shelton Street, Covent Garden, London, WC2H
+            KELCROFT LTD is the data controller. We are registered in England &amp;
+            Wales, company number 17419745, at 71-75 Shelton Street, Covent Garden, London, WC2H
             9JQ, United Kingdom.
           </p>
           <p style={{ ...pStyle, marginBottom: 0 }}>
@@ -233,7 +233,7 @@ export default function PrivacyPage() {
             you which version you are reading.
           </p>
           <p style={{ ...pStyle, marginBottom: 0, color: 'rgba(255,255,255,0.5)', fontSize: '0.85rem' }}>
-            Health Check Holidays Ltd, registered in England &amp; Wales, company number 17079237.
+            KELCROFT LTD, registered in England &amp; Wales, company number 17419745.
             Registered office: 71-75 Shelton Street, Covent Garden, London, WC2H 9JQ, United
             Kingdom.
           </p>

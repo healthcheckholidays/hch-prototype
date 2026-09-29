@@ -58,12 +58,9 @@ a:hover { text-decoration: underline; }
 
 /* ─── Layout ─────────────────────────────────────────────────── */
 .site-shell {
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
   background: #fff;
   min-height: 100vh;
-  border-left: var(--border);
-  border-right: var(--border);
 }
 
 .page-content { padding: 24px 24px 48px; }
